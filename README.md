@@ -1,5 +1,5 @@
 # SploitCraft
-🏴‍☠️ Hacking Demos and Proof-of-Concepts 🥷 
+🏴‍☠️ Hacking and Offensive Security Demos/Proof-of-Concepts 🥷 
 
 
 ## 📚 About 
