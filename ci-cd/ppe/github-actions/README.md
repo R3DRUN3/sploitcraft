@@ -92,7 +92,9 @@ When we leave this comment, it will trigger the GitHub Action, and that payload 
 From there, we will have the ability to exfiltrate secrets.    
 Watch a demonstration of the entire workflow in the following video:  
 
-![video](https://github.com/R3DRUN3/sploitcraft/assets/102741679/03dcace3-0094-4a9d-815e-a420bb5e64c4)  
+
+https://github.com/R3DRUN3/sploitcraft/assets/102741679/ffd8696e-1271-469e-9629-38c3b087f28c
+
 
 
 
