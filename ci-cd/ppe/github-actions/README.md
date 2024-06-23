@@ -49,7 +49,7 @@ jobs:
 This GitHub Action workflow (`command-injection-demo`) triggers on the creation of issue comments.  
 Upon activation, it retrieves the body of the comment (`${{ github.event.comment.body }}`) and echoes it directly within the workflow execution environment.  
 The vulnerability lies in the lack of input sanitization for `${{ github.event.comment.body }}`.  
-Since the workflow echoes this variable without any validation or sanitization, an attacker can potentially inject arbitrary operating system (OS) commands into the workflow.  
+Since the workflow echoes this variable without any validation or sanitization, an attacker can potentially pipe and inject arbitrary operating system commands into the workflow.  
 By crafting a malicious comment, an attacker could exploit this vulnerability to execute unauthorized commands within the GitHub Actions environment and exfiltrate the secrets (`AWS_API_KEY`, `MYSQL_CONNECTION_STRING` and `GENERIC_TOKEN`).  
 
 
@@ -59,7 +59,7 @@ By crafting a malicious comment, an attacker could exploit this vulnerability to
 ![legit-comment](./images/legit_issue_comment.png)  
 ![legit-action-run](./images/legit_action_run.png)   
  
-As you can see the action was triggered by our comment in printed out the body of the comment.  
+As you can see the action was triggered by our comment and printed out the body of the comment.  
 
 At this point we can proceed to poison the execution 😈
 
