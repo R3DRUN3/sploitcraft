@@ -1,7 +1,7 @@
 # AWS INITIAL ACCESS AND ENUMERATION
 
 When threat actors compromise an AWS user, they often follow a systematic process of enumeration and lateral movement to expand their access and gather sensitive information.  
-Here's a breakdown of how attackers perform these activities using various AWS CLI commands, usually these operation are automated via the use of tools like [*pacu*](https://github.com/RhinoSecurityLabs/pacu).   
+Here's a breakdown of how attackers perform these [*TTPs*](https://www.sentinelone.com/blog/inside-the-mind-of-a-cyber-attacker-tactics-techniques-and-procedures-ttps-every-security-practitioner-should-know/) using various AWS CLI commands, usually these operation are automated via the use of tools like [*pacu*](https://github.com/RhinoSecurityLabs/pacu).   
 The first step an attacker takes is to identify the compromised IAM user and account details:
 ```sh
 aws sts get-caller-identity
