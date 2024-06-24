@@ -1,7 +1,7 @@
 # Github Actions: Poisoned Pipeline Execution
 
 
-This folder showcases a GitHub Actions vulnerable to Poisoned Pipeline Execution (PPE). 
+This folder showcases an attack against a GitHub Action Pipeline vulnerable to *PPE*. 
 
 ### Demo Objective 
 
@@ -9,7 +9,7 @@ The objective of this demo is to illustrate how an attacker can exploit a vulner
 
 - Execute remote code.
 
-- Exfiltrate sensitive secrets from the GitHub environment.
+- Exfiltrate sensitive secrets from the GitHub runner environment.
 
 ## Prerequisites 
 
@@ -17,17 +17,14 @@ To run this demo, ensure you have:
 
 - Access to a GitHub repository with GitHub Actions enabled.
 
-- Permission to modify GitHub Actions workflows.
-
-- Awareness of the ethical implications of testing in a controlled environment.
 
 ## Instructions 
  
-1. **Setup** : Create a new Github repository.
+1. **Repo Creation** : Create a new Github repository.
  
 2. **Configuration** : Inside the new repo, create the `.github/workflows` repo.
  
-3. **Execute** : Inside the workflow repo create a yaml file called `vulnerable.yaml` and copy the following inside:  
+3. **Action Manifest** : Inside the workflow repo create a yaml file called `vulnerable.yaml` and copy the following inside:  
 ```yaml
 name: command-injection-demo
 on:
@@ -46,7 +43,7 @@ jobs:
           GENERIC_TOKEN: ${{ secrets.GENERIC_TOKEN }}
 ```  
 
-This GitHub Action workflow (`command-injection-demo`) triggers on the creation of issue comments.  
+This GitHub Action workflow (`command-injection-demo`) triggers on the creation of new comments inside an issue.  
 Upon activation, it retrieves the body of the comment (`${{ github.event.comment.body }}`) and echoes it directly within the workflow execution environment.  
 The vulnerability lies in the lack of input sanitization for `${{ github.event.comment.body }}`.  
 Since the workflow echoes this variable without any validation or sanitization, an attacker can potentially pipe and inject arbitrary operating system commands into the workflow.  
@@ -66,7 +63,7 @@ At this point we can proceed to poison the execution 😈
 In order to do that we will use [*ngrok*](https://ngrok.com/) (you can also use [*Cloudflare Tunnels*](https://www.cloudflare.com/products/tunnel/) or whatever tool fit the need to seamlessy expose a local service to the internet).  
 
 
-Open a new nectcat local listener:  
+Open a new nectcat listener on your local machine:  
 ```sh
 nc -lnvp 1337
 ```  
