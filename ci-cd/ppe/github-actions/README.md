@@ -20,11 +20,11 @@ To run this demo, ensure you have:
 
 ## Instructions 
  
-1. **Repo Creation** : Create a new Github repository.
+1. **Repo Creation** : Create a new Github repo and add some github action's secrets (eg `AWS_API_KEY`, `MYSQL_CONNECTION_STRING` and `GENERIC_TOKEN`)  
  
-2. **Configuration** : Inside the new repo, create the `.github/workflows` repo.
+2. **Configuration** : Inside the new repo, create the `.github/workflows` folder.
  
-3. **Action Manifest** : Inside the workflow repo create a yaml file called `vulnerable.yaml` and copy the following inside:  
+3. **Action Manifest** : Inside the workflow folder, create a yaml file called `vulnerable.yaml` and copy the following manifest inside:  
 ```yaml
 name: command-injection-demo
 on:
