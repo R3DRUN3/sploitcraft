@@ -20,7 +20,7 @@ docker run -it --privileged --net=host bettercap/bettercap sudo bettercap -iface
 ```  
 This starts Bettercap, using the specified network interface (e.g., `eth0`). Bettercap will initialize and prepare to monitor and manipulate network traffic.
  
-**Configure Bettercap for ARP Spoofing**:
+**Configure Bettercap for ARP Spoofing**:  
 
 ```bash
 net.probe on
@@ -52,7 +52,7 @@ This enables ARP spoofing, where Bettercap sends ARP packets to the target and t
 The packets claim that the Kali VM's MAC address is associated with both the target IP (192.168.93.129) and the gateway's IP.  
 This makes the target VM believe the Kali VM is the gateway, and vice versa.
  
-**Monitor HTTP Traffic**
+**Monitor HTTP Traffic**:  
 
 ```bash
 http.proxy on
@@ -68,14 +68,14 @@ https.proxy.sslstrip on
 This enables SSL stripping, where Bettercap will downgrade HTTPS connections to HTTP whenever possible.  
 This allows Bettercap to capture the contents of these connections, including credentials, because the traffic is no longer encrypted.  
  
-**Access the HTTP Login Page**
+**Access the HTTP Login Page**:  
 On the Windows 11 VM, we simulate the victim opening a browser and navigating to an HTTP login page (in our case an [*umbrel*](https://github.com/getumbrel/umbrel) node login form) and entering credentials.  
  
 The Windows VM sends HTTP requests to the login server.    
 These requests pass through the Kali VM (acting as the gateway due to ARP spoofing).    
 Bettercap intercepts these requests, logs the traffic, and forwards it to the actual gateway.  
  
-**Capture the Credentials**:
+**Capture the Credentials**:  
 Bettercap logs the HTTP traffic, including the login credentials entered on the Windows VM.    
 This information is displayed in the Bettercap terminal, allowing you to see the captured credentials:  
 
@@ -84,14 +84,14 @@ This information is displayed in the Bettercap terminal, allowing you to see the
 
 ### Detailed Flow of Network Traffic 
  
-- **ARP Spoofing** :
+- **ARP Spoofing**:  
   - Kali VM (Bettercap) sends ARP packets to the Windows VM and the network gateway.
 
   - The Windows VM updates its ARP cache to associate the gateway's IP with the Kali VM's MAC address.
 
   - The network gateway updates its ARP cache to associate the Windows VM's IP with the Kali VM's MAC address.
  
-- **Traffic Interception** :
+- **Traffic Interception**:  
   - The Windows VM sends HTTP requests to the login server, thinking it's communicating directly with the gateway.
 
   - These requests are intercepted by the Kali VM due to the ARP spoofing.
@@ -100,7 +100,7 @@ This information is displayed in the Bettercap terminal, allowing you to see the
 
   - The responses from the server are intercepted by the Kali VM, logged, and then forwarded to the Windows VM.
  
-- **Credential Capture** :
+- **Credential Capture**:  
   - When the Windows VM submits credentials on an HTTP login page, the credentials are part of the HTTP POST request.
 
   - Bettercap captures this HTTP POST request, extracting and logging the credentials before forwarding the request to the actual server.
