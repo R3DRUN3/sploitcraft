@@ -1,6 +1,6 @@
 # ARP SPOOFING
 
-ARP spoofing (Address Resolution Protocol spoofing) is a cyber attack where an attacker sends falsified ARP (Address Resolution Protocol) messages over a local network.  
+ARP spoofing (Address Resolution Protocol spoofing) is a cyber attack where an attacker sends falsified [*ARP*](https://en.wikipedia.org/wiki/Address_Resolution_Protocol) messages over a local network.  
 This results in the linking of the attacker's MAC address with the IP address of a legitimate computer or server on the network.  
 
 Consequently, the attacker can intercept, modify, or block data intended for the legitimate IP address, leading to potential data breaches, man-in-the-middle attacks, or network disruptions.  
