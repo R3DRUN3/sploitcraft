@@ -90,7 +90,35 @@ From there, we will have the ability to exfiltrate secrets.
 Watch a demonstration of the entire workflow in the following video:  
 
 
-https://github.com/R3DRUN3/sploitcraft/assets/102741679/ffd8696e-1271-469e-9629-38c3b087f28c
+https://github.com/R3DRUN3/sploitcraft/assets/102741679/ffd8696e-1271-469e-9629-38c3b087f28c  
+
+</br>
+
+We can inspect repositories to find possible misconfiguration leading to PPE with [poutine](https://github.com/boostsecurityio/poutine) (or other tools mentioned [here](https://github.com/myugan/awesome-cicd-security?tab=readme-ov-file#tools)):  
+
+```console
+docker run -e GH_TOKEN ghcr.io/boostsecurityio/poutine:latest analyze_repo r3drun3/vuln
+
+Rule: Injection with Arbitrary External Contributor Input
+Severity: warning
+Description: The pipeline contains an injection into bash or JavaScript with an expression 
+that can contain user input. Prefer placing the expression in an environment variable 
+instead of interpolating it directly into a script.
+Documentation: https://boostsecurityio.github.io/poutine/rules/injection
+
++--------------+--------------------------------+----------------------------------------------------------------------------+
+|  REPOSITORY  |            DETAILS             |                                    URL                                     |
++--------------+--------------------------------+----------------------------------------------------------------------------+
+| r3drun3/vuln | .github/workflows/issue.yaml   | https://github.com/r3drun3/vuln/tree/HEAD/.github/workflows/issue.yaml#L10 |
+|              | Job: auto-manage-new-issue     |                                                                            |
+|              | Step: 0                        |                                                                            |
+|              | Sources:                       |                                                                            |
+|              | github.event.comment.body      |                                                                            |
+|              |                                |                                                                            |
++--------------+--------------------------------+----------------------------------------------------------------------------+
+```
+
+
 
 
 
