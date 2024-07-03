@@ -66,7 +66,7 @@ Executing 359 checks, please wait...
 -> Scanning drs service |▉▉▉▉▉▉▉▉▉▉▉▎                            | / 101/359 [28%] in 2:19
 ```  
 
-After some minutes the scan has finisched and printed all the findings to stdout:  
+After some minutes the scan has finished and printed all the findings to stdout:  
 
 ```sh
 Overview Results:
