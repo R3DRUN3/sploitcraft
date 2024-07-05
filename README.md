@@ -23,7 +23,7 @@ The idea is to organize topics by reference and to have guides that are as self-
 > [!WARNING]  
 > This repository is intended for educational purposes only.  
 > All demos and PoCs are designed to be used in controlled, legal environments.  
-> Unauthorized use of the techniques and tools provided in this repository is strictly prohibited. 
+> Unauthorized use of the techniques and tools provided in this repository is strictly prohibited.  
 > **The authors assume no responsibility for the weaponization of this content**. 
 
 
