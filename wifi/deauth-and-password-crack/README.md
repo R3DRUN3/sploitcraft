@@ -164,3 +164,7 @@ sudo aircrack-ng -w /usr/share/wordlists/rockyou.txt -b <TARGET_BSSID> attack_ca
 
 The following video demonstrates the process of capturing a handshake and subsequently cracking the password from the captured packets:  
 
+
+
+https://github.com/R3DRUN3/sploitcraft/assets/102741679/16497005-7909-48c2-af11-b84a2cb7bbdf
+
