@@ -1,5 +1,11 @@
-# SploitCraft
+# SploitCraft  
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/) ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r3drun3/sploitcraft/main) ![Forks](https://img.shields.io/github/forks/r3drun3/sploitcraft?style=flat-square&color=green)
+
+
+
 🏴‍☠️ Hacking and Offensive Security Guides/Demos/Proof-of-Concepts 🥷 
+
+
 
 
 ## 📚 About 
@@ -9,18 +15,23 @@ This repository is intended to help professionals and enthusiasts understand and
 ## 🗂️ Repository Structure 
 
 The repository is organized into folders based on specific topics.  
-Each folder contains detailed READMEs with step-by-step instructions to follow along.  
+Each folder contains directories and detailed READMEs with step-by-step instructions to follow along:  
+The idea is to organize topics by reference and to have guides that are as self-contained as possible, ensuring they are easy to consume and replicate. 
 
-## ⚠️ Disclaimer 
+## Disclaimer 
 
-**This repository is intended for educational purposes only**.  
-**All demos and PoCs are designed to be used in controlled, legal environments**.  
-**Unauthorized use of the techniques and tools provided in this repository is strictly prohibited**.
+> [!WARNING]  
+> This repository is intended for educational purposes only.  
+> All demos and PoCs are designed to be used in controlled, legal environments.  
+> Unauthorized use of the techniques and tools provided in this repository is strictly prohibited. 
+> **The authors assume no responsibility for the weaponization of this content**. 
+
 
 ## 🤝 Contributing 
 
-We welcome contributions from the community! If you want to add a new proof of concept, tool, or improvement, feel free to submit a pull request.  
-Please ensure that your contributions adhere to the structure and format of the repository.
+We welcome contributions from the community!  
+If you want to add a new proof of concept, feel free to submit a pull request.   
+Please ensure that your contributions adhere to the current structure and format of the repository.  
 
 
 ---
