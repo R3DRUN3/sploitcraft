@@ -1,6 +1,14 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
+# Define the directory path
+$outputDir = "C:\temp"
+
+# Create the directory if it does not exist
+if (-Not (Test-Path -Path $outputDir)) {
+    New-Item -Path $outputDir -ItemType Directory | Out-Null
+}
+
 # Get all screens
 $screens = [System.Windows.Forms.Screen]::AllScreens
 
@@ -19,7 +27,7 @@ foreach ($screen in $screens) {
     $graphics.Dispose()
 
     # Define the output file path for this screen
-    $outputFile = "C:\temp\Screenshot_$($screen.DeviceName.Replace('\', '_')).jpg"
+    $outputFile = "$outputDir\Screenshot_$($screen.DeviceName.Replace('\', '_')).jpg"
 
     # Save the screenshot to a file
     $screenshot.Save($outputFile, [System.Drawing.Imaging.ImageFormat]::Jpeg)
