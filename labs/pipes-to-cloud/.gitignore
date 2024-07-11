@@ -2,8 +2,10 @@
 .env
 secret.tfvars
 
-# aws keys
+# aws
 aws_keys.txt
+s3-download
+pacu/
 
 # terraform files
 LICENSE
