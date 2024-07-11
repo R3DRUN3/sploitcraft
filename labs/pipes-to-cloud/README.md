@@ -566,10 +566,10 @@ Output:
 }
 ```  
 
-From this you learn that our current user is called `ppe-s3-readonly-user`.  
+From this you learn that your current user is called `ppe-s3-readonly-user`.  
 
 
-Let's try to retrieve more info about our current user:  
+Try to retrieve more info about the current user:  
 ```sh
 aws iam get-user --user-name ppe-s3-readonly-user
 ``` 
@@ -590,7 +590,7 @@ output:
 An error occurred (AccessDenied) when calling the ListAttachedUserPolicies operation: User: arn:aws:iam:user/ppe-s3-readonly-user is not authorized to perform: iam:ListAttachedUserPolicies on resource: user ppe-s3-readonly-user because no identity-based policy allows the iam:ListAttachedUserPolicies action
 ```  
 
-Seems like our current user does not have grants to call these basic aws api...however the user name can be an indication, let's try to list S3 buckets:  
+Seems like your current user does not have grants to call these basic aws api...however the user name can be an indication, let's try to list S3 buckets:  
 
 ```sh
 aws s3api list-buckets
