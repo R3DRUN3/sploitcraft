@@ -451,7 +451,7 @@ docker run -e GH_TOKEN ghcr.io/boostsecurityio/poutine:latest analyze_repo r3dru
 ```  
 
 From the output you read:  
-```sh
+```console
 Rule: Injection with Arbitrary External Contributor Input
 Severity: warning
 Description: The pipeline contains an injection into bash or JavaScript with an expression 
@@ -519,7 +519,7 @@ Our payload will be:
 
 This will trigger the github action and open a reverse shell from within the github runner, back to your local machine!  
 
-```sh
+```console
 listening on [any] 1337 ...
 connect to [127.0.0.1] from (UNKNOWN) [127.0.0.1] 40158
 bash: cannot set terminal process group (469): Inappropriate ioctl for device
