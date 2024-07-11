@@ -3,7 +3,7 @@
 Hack your way from Github Action pipelines to AWS!
 
 ## Abstract
-This lab enables provisioning of all necessary infrastructure for a demonstrating an attack scenario in which a malicious actor starts by compromising a [*Github Action*](https://github.com/features/actions), performs lateral movement across an [*AWS*](https://aws.amazon.com/) account and, eventually, escalates privileges to aws administrator.  
+This lab enables provisioning of all necessary infrastructure for demonstrating an attack scenario in which a malicious actor starts by compromising a [*Github Action*](https://github.com/features/actions), performs lateral movement across an [*AWS*](https://aws.amazon.com/) account and, eventually, escalates privileges to aws administrator.  
 
 Specifically, the attack comprises the following phases:  
 
