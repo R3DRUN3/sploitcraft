@@ -624,7 +624,7 @@ download: s3://s3-bucket-ppe-attack-demo-4421/test.py to s3-download/test.py
 download: s3://s3-bucket-ppe-attack-demo-4421/aws_keys.txt to s3-download/aws_keys.txt
 download: s3://s3-bucket-ppe-attack-demo-4421/README.md to s3-download/README.md
 ```  
-We can!
+You can!
 and you also see that there is a file called `aws_keys.txt`  
 
 Inside that file other aws access keys, export those and begin enumeration for the new user:  
@@ -759,7 +759,7 @@ whoami
 ```  
 
 list all available pacu commands with `ls`.  
-We want to check for IAM Privilege escalation paths:  
+You want to check for IAM Privilege escalation paths:  
 ```sh
 help iam__privesc_scan
 ```  
