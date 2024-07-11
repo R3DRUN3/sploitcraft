@@ -5,6 +5,7 @@ secret.tfvars
 # terraform files
 LICENSE
 CHANGELOG.md
+.terraform/
 terraform-provider-github_*
 .terraform.lock.hcl
 terraform.tfstate
