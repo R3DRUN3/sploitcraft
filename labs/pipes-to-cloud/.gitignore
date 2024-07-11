@@ -2,6 +2,9 @@
 .env
 secret.tfvars
 
+# aws keys
+aws_keys.txt
+
 # terraform files
 LICENSE
 CHANGELOG.md

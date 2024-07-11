@@ -15,7 +15,7 @@ Specifically, the attack comprises the following phases:
 
 3. Enumeration of AWS resources using the previously extracted secrets, revealing access to read the contents of an S3 bucket.  
 
-4. The bucket contains a Git repository; using GitLeaks, we uncover additional AWS keys in previous commits.  
+4. The bucket contains some files: we uncover additional AWS keys.  
 
 5. Leveraging these keys, we employ Pacu to perform privilege escalation and gain root access across the entire AWS account.  
 
@@ -40,7 +40,225 @@ In order for the lab to work, we need to provision some infrastructure, in parti
 We will use `terraform` for this task.  
 
 ### aws setup
-First we will setup the required aws environment.  
+First we will setup the required aws environment. 
+We will create one S3 bucket and two IAM users (along with required IAM policies):
+- `ppe-s3-readonly-user`
+- `vulnerable-iam-user`
+
+
+Cd to the `infra/aws` directory and create a new file called `secret.tfvars`.  
+This file will contain all the variables required to setup the github repository, as well as our aws keys (retrieved from the aws terraform step): 
+
+```sh
+aws_region = "your-aws-region-here"
+s3_bucket_name ="your-aws-s3-bucket-name-for-this-demo-here"
+```  
+
+Now we can proceede with terraform provisioning (note, you need to have aws cli already installed and configured with sufficient rights for this step).  
+Init the terraform module:  
+```sh
+terraform init
+```  
+
+
+Now launch a terraform plan by specifying the secret's file:  
+
+```sh
+terraform plan -var-file="secret.tfvars"
+```  
+
+The plan should look similar to this:  
+```sh
+  # aws_iam_access_key.ppe_s3_readonly_access_key will be created
+  + resource "aws_iam_access_key" "ppe_s3_readonly_access_key" {
+      + create_date                    = (known after apply)
+      + encrypted_secret               = (known after apply)
+      + encrypted_ses_smtp_password_v4 = (known after apply)
+      + id                             = (known after apply)
+      + key_fingerprint                = (known after apply)
+      + secret                         = (sensitive value)
+      + ses_smtp_password_v4           = (sensitive value)
+      + status                         = "Active"
+      + user                           = "ppe-s3-readonly-user"
+    }
+
+  # aws_iam_access_key.vulnerable_iam_access_key will be created
+  + resource "aws_iam_access_key" "vulnerable_iam_access_key" {
+      + create_date                    = (known after apply)
+      + encrypted_secret               = (known after apply)
+      + encrypted_ses_smtp_password_v4 = (known after apply)
+      + id                             = (known after apply)
+      + key_fingerprint                = (known after apply)
+      + secret                         = (sensitive value)
+      + ses_smtp_password_v4           = (sensitive value)
+      + status                         = "Active"
+      + user                           = "vulnerable-iam-user"
+    }
+
+  # aws_iam_user.ppe_s3_readonly_user will be created
+  + resource "aws_iam_user" "ppe_s3_readonly_user" {
+      + arn           = (known after apply)
+      + force_destroy = false
+      + id            = (known after apply)
+      + name          = "ppe-s3-readonly-user"
+      + path          = "/"
+      + tags_all      = (known after apply)
+      + unique_id     = (known after apply)
+    }
+
+  # aws_iam_user.vulnerable_iam_user will be created
+  + resource "aws_iam_user" "vulnerable_iam_user" {
+      + arn           = (known after apply)
+      + force_destroy = false
+      + id            = (known after apply)
+      + name          = "vulnerable-iam-user"
+      + path          = "/"
+      + tags_all      = (known after apply)
+      + unique_id     = (known after apply)
+    }
+
+  # aws_iam_user_policy.ppe_s3_readonly_policy will be created
+  + resource "aws_iam_user_policy" "ppe_s3_readonly_policy" {
+      + id          = (known after apply)
+      + name        = "ppe-s3-readonly-policy"
+      + name_prefix = (known after apply)
+      + policy      = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "s3:ListBucket",
+                          + "s3:ListAllMyBuckets",
+                          + "s3:GetObject",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + user        = "ppe-s3-readonly-user"
+    }
+
+  # aws_iam_user_policy.vulnerable_iam_policy will be created
+  + resource "aws_iam_user_policy" "vulnerable_iam_policy" {
+      + id          = (known after apply)
+      + name        = "vulnerable-iam-policy"
+      + name_prefix = (known after apply)
+      + policy      = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "iam:SimulatePrincipalPolicy",
+                          + "iam:SimulateCustomPolicy",
+                          + "iam:Put*",
+                          + "iam:List*",
+                          + "iam:Get*",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                      + Sid      = "Statement1"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + user        = "vulnerable-iam-user"
+    }
+
+  # aws_s3_bucket.ppe_attack_demo_bucket will be created
+  + resource "aws_s3_bucket" "ppe_attack_demo_bucket" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = "s3-bucket-ppe-attack-demo-4421"
+      + bucket_domain_name          = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = true
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = (known after apply)
+      + request_payer               = (known after apply)
+      + tags                        = {
+          + "Environment" = "demo"
+        }
+      + tags_all                    = {
+          + "Environment" = "demo"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+Plan: 7 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + ppe_s3_readonly_access_key_id     = (known after apply)
+  + ppe_s3_readonly_access_key_secret = (sensitive value)
+  + vulnerable_iam_access_key_id      = (known after apply)
+  + vulnerable_iam_access_key_secret  = (sensitive value)
+```  
+
+
+If you are ok with it, apply!
+
+```sh
+terraform apply -var-file="secret.tfvars"
+```  
+
+The previous command will take less than a minute to complete and will return the keys ID for the two IAM users:  
+```sh
+Apply complete! Resources: 7 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+ppe_s3_readonly_access_key_id = "AKI*************"
+ppe_s3_readonly_access_key_secret = <sensitive>
+vulnerable_iam_access_key_id = "AKI*************"
+vulnerable_iam_access_key_secret = <sensitive>
+```  
+
+Now you need to add the keys for the `vulnerable-iam-user` inside the local `repo-content` folder.  
+In order to do that, open the `terraform.tfstate` file, retrieve both the access key id and access key value for the `vulnerable-iam-user`  
+and put them inside a file called `aws_keys.txt` inside the `repo-content` directory.  
+
+Now is time to push that directory to the S3 bucket we created:  
+```sh
+aws s3 sync repo-content s3://s3-bucket-ppe-attack-demo-4421
+```  
+
+output of the previous command:  
+```sh
+upload: repo-content/README.md to s3://s3-bucket-ppe-attack-demo-4421/README.md
+upload: repo-content/aws_keys.txt to s3://s3-bucket-ppe-attack-demo-4421/aws_keys.txt
+upload: repo-content/test.py to s3://s3-bucket-ppe-attack-demo-4421/test.py
+```  
+
+The last thing you need to do is to get the secret access key id and value of the `ppe-s3-readonly-user` from  
+the `terraform.tfstate` file, you will need them to setup the github repository in the next step!  
+
 
 
 
@@ -53,7 +271,7 @@ We will create a repository with a Github Action that automatically prints the b
 This is what make this type of attack so dangerous: **the threat actor only needs to write a comment!**  
 
 Cd to the `infra/github` directory and create a new file called `secret.tfvars`.  
-This file will contain all the secrets required to setup the github repository, as well as our aws keys (retrieved from the aws terraform step): 
+This file will contain all the secrets required to setup the github repository, as well as the aws keys for the `ppe-s3-readonly-user` (retrieved from the aws terraform step): 
 
 ```sh
 gh_owner = "your-github-account-or-org-here"
