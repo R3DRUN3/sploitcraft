@@ -1,7 +1,9 @@
 # Github Actions: Poisoned Pipeline Execution
 
 
-This folder showcases an attack against a GitHub Action Pipeline vulnerable to [*PPE*](https://github.com/R3DRUN3/sploitcraft/tree/main/ci-cd/ppe). 
+This folder showcases an attack against a GitHub Action Pipeline vulnerable to [*PPE*](https://github.com/R3DRUN3/sploitcraft/tree/main/ci-cd/ppe).  
+For a complete hacking lab leveraging PPE as the attack's entry point, take a look at [*this*](../../../labs/pipes-to-cloud/).   
+
 
 ### Demo Objective 
 
