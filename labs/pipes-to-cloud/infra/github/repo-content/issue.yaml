@@ -1,0 +1,14 @@
+name: issue comment workflow
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  auto-manage-new-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve Issue Information
+        run: |
+          echo "NEW ISSUE COMMENT ✍️" && echo ${{ github.event.comment.body }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -1,0 +1,11 @@
+# env files
+.env
+secret.tfvars
+
+# terraform files
+LICENSE
+CHANGELOG.md
+terraform-provider-github_*
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
