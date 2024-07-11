@@ -445,7 +445,7 @@ and observe that the github action has been triggered by your comment:
 ![first-action](./images/first-action.png)  
 
 
-As an attacker, seeing that issue (**THIS REPO IS NOT SAFE**) makes you suspicious and you trying scanning the repo with [*poutine*](https://github.com/boostsecurityio/poutine):  
+As an attacker, seeing that issue (**THIS REPO IS NOT SAFE**) makes you suspicious and you proceed to scan the repo with [*poutine*](https://github.com/boostsecurityio/poutine):  
 ```sh
 docker run -e GH_TOKEN ghcr.io/boostsecurityio/poutine:latest analyze_repo r3drun3/ppe
 ```  
