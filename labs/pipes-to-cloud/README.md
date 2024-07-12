@@ -19,6 +19,9 @@ Specifically, the attack comprises the following phases:
 
 ![attack](./images/attack.png)  
 
+This workshop will put you in the shoes of the attacker!  
+
+
 
 ## Prerequisites
 - [*python*](https://www.python.org/downloads/)
