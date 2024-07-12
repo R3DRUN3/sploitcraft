@@ -52,4 +52,10 @@ resource "github_actions_secret" "aws_key_value" {
   plaintext_value = var.github_actions_secret_aws_key_value
 }
 
+# GitHub Issue
+resource "github_issue" "default" {
+  repository       = github_repository.ppe.name
+  title            = "THIS REPO IS NOT SAFE"
+  body             = "I've found some security issues of your repo...can we discuss it in private?"
+}
 
