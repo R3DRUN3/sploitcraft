@@ -427,7 +427,7 @@ navigate to that url and check that everything is ok, you should find a reposito
 ![repo-created](./images/repo-created.png)  
 
 
-Create a new issue on that repo:  
+You will also find the following issue on that repo:  
 ![issue-created](./images/issue-created.png)  
 
 
