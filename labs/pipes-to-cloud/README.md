@@ -13,9 +13,9 @@ Specifically, the attack comprises the following phases:
 
 3. Enumeration of AWS resources using the previously extracted keys, revealing read access to the contents of an [*S3 bucket*](https://aws.amazon.com/pm/serv-s3).  
 
-4. The bucket contains some files: you uncover additional AWS keys.  
+4. The bucket contains some files: the attacker uncover additional AWS keys.  
 
-5. Leveraging these keys, you employ [*Pacu*](https://github.com/RhinoSecurityLabs/pacu) to perform privilege escalation and gain admin access across the entire AWS account.  
+5. Leveraging these keys, the attacker employ [*Pacu*](https://github.com/RhinoSecurityLabs/pacu) to perform privilege escalation and gain admin access across the entire AWS account.  
 
 ![attack](./images/attack.png)  
 
