@@ -44,9 +44,7 @@ You will use `terraform` for this task.
 ### aws setup
 
 First you will setup the required aws environment.  
-You will create one S3 bucket and two IAM users (along with required IAM policies):
-- `ppe-s3-readonly-user`
-- `vulnerable-iam-user`
+You will create two *S3* buckets, one *CloudTrail* instance and two *IAM* users (along with required IAM policies).  
 
 
 Move to the `infra/aws` directory and create a new file called `secret.tfvars`.  
@@ -54,7 +52,8 @@ This file will contain all the variables required to setup the aws environment:
 
 ```sh
 aws_region = "<your-aws-region-here>"
-s3_bucket_name ="<your-aws-s3-bucket-name-for-this-demo-here>"
+s3_bucket_lateral_movement_name ="<your-aws-s3-bucket-name-for-lateral-movement-demo-here>" # must be unique
+s3_bucket_cloudtrail_name ="<your-aws-s3-bucket-name-for-cloudtrail-here>" # must be unique
 ```  
 
 Now you can proceed with terraform provisioning (note, you need to have aws cli already installed and configured with sufficient rights for this step).  
@@ -70,162 +69,8 @@ Now launch a terraform plan by specifying the secret's file:
 terraform plan -var-file="secret.tfvars"
 ```  
 
-The plan should look similar to this one:  
-```sh
-  # aws_iam_access_key.ppe_s3_readonly_access_key will be created
-  + resource "aws_iam_access_key" "ppe_s3_readonly_access_key" {
-      + create_date                    = (known after apply)
-      + encrypted_secret               = (known after apply)
-      + encrypted_ses_smtp_password_v4 = (known after apply)
-      + id                             = (known after apply)
-      + key_fingerprint                = (known after apply)
-      + secret                         = (sensitive value)
-      + ses_smtp_password_v4           = (sensitive value)
-      + status                         = "Active"
-      + user                           = "ppe-s3-readonly-user"
-    }
 
-  # aws_iam_access_key.vulnerable_iam_access_key will be created
-  + resource "aws_iam_access_key" "vulnerable_iam_access_key" {
-      + create_date                    = (known after apply)
-      + encrypted_secret               = (known after apply)
-      + encrypted_ses_smtp_password_v4 = (known after apply)
-      + id                             = (known after apply)
-      + key_fingerprint                = (known after apply)
-      + secret                         = (sensitive value)
-      + ses_smtp_password_v4           = (sensitive value)
-      + status                         = "Active"
-      + user                           = "vulnerable-iam-user"
-    }
-
-  # aws_iam_user.ppe_s3_readonly_user will be created
-  + resource "aws_iam_user" "ppe_s3_readonly_user" {
-      + arn           = (known after apply)
-      + force_destroy = false
-      + id            = (known after apply)
-      + name          = "ppe-s3-readonly-user"
-      + path          = "/"
-      + tags_all      = (known after apply)
-      + unique_id     = (known after apply)
-    }
-
-  # aws_iam_user.vulnerable_iam_user will be created
-  + resource "aws_iam_user" "vulnerable_iam_user" {
-      + arn           = (known after apply)
-      + force_destroy = false
-      + id            = (known after apply)
-      + name          = "vulnerable-iam-user"
-      + path          = "/"
-      + tags_all      = (known after apply)
-      + unique_id     = (known after apply)
-    }
-
-  # aws_iam_user_policy.ppe_s3_readonly_policy will be created
-  + resource "aws_iam_user_policy" "ppe_s3_readonly_policy" {
-      + id          = (known after apply)
-      + name        = "ppe-s3-readonly-policy"
-      + name_prefix = (known after apply)
-      + policy      = jsonencode(
-            {
-              + Statement = [
-                  + {
-                      + Action   = [
-                          + "s3:ListBucket",
-                          + "s3:ListAllMyBuckets",
-                          + "s3:GetObject",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = "*"
-                    },
-                ]
-              + Version   = "2012-10-17"
-            }
-        )
-      + user        = "ppe-s3-readonly-user"
-    }
-
-  # aws_iam_user_policy.vulnerable_iam_policy will be created
-  + resource "aws_iam_user_policy" "vulnerable_iam_policy" {
-      + id          = (known after apply)
-      + name        = "vulnerable-iam-policy"
-      + name_prefix = (known after apply)
-      + policy      = jsonencode(
-            {
-              + Statement = [
-                  + {
-                      + Action   = [
-                          + "iam:SimulatePrincipalPolicy",
-                          + "iam:SimulateCustomPolicy",
-                          + "iam:Put*",
-                          + "iam:List*",
-                          + "iam:Get*",
-                        ]
-                      + Effect   = "Allow"
-                      + Resource = "*"
-                      + Sid      = "Statement1"
-                    },
-                ]
-              + Version   = "2012-10-17"
-            }
-        )
-      + user        = "vulnerable-iam-user"
-    }
-
-  # aws_s3_bucket.ppe_attack_demo_bucket will be created
-  + resource "aws_s3_bucket" "ppe_attack_demo_bucket" {
-      + acceleration_status         = (known after apply)
-      + acl                         = (known after apply)
-      + arn                         = (known after apply)
-      + bucket                      = "s3-bucket-ppe-attack-demo-4421"
-      + bucket_domain_name          = (known after apply)
-      + bucket_prefix               = (known after apply)
-      + bucket_regional_domain_name = (known after apply)
-      + force_destroy               = true
-      + hosted_zone_id              = (known after apply)
-      + id                          = (known after apply)
-      + object_lock_enabled         = (known after apply)
-      + policy                      = (known after apply)
-      + region                      = (known after apply)
-      + request_payer               = (known after apply)
-      + tags                        = {
-          + "Environment" = "demo"
-        }
-      + tags_all                    = {
-          + "Environment" = "demo"
-        }
-      + website_domain              = (known after apply)
-      + website_endpoint            = (known after apply)
-
-      + cors_rule (known after apply)
-
-      + grant (known after apply)
-
-      + lifecycle_rule (known after apply)
-
-      + logging (known after apply)
-
-      + object_lock_configuration (known after apply)
-
-      + replication_configuration (known after apply)
-
-      + server_side_encryption_configuration (known after apply)
-
-      + versioning (known after apply)
-
-      + website (known after apply)
-    }
-
-Plan: 7 to add, 0 to change, 0 to destroy.
-
-Changes to Outputs:
-  + ppe_s3_readonly_access_key_id     = (known after apply)
-  + ppe_s3_readonly_access_key_secret = (sensitive value)
-  + vulnerable_iam_access_key_id      = (known after apply)
-  + vulnerable_iam_access_key_secret  = (sensitive value)
-```  
-
-
-If you are ok with it, apply!
+If you are ok with the plan, apply it!
 
 ```sh
 terraform apply -var-file="secret.tfvars"
@@ -233,7 +78,7 @@ terraform apply -var-file="secret.tfvars"
 
 The previous command will take less than a minute to complete and will return the keys ID for the two IAM users:  
 ```sh
-Apply complete! Resources: 7 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 9 added, 0 changed, 0 destroyed.
 
 Outputs:
 
@@ -295,121 +140,8 @@ Now launch a terraform plan by specifying the secret's file:
 terraform plan -var-file="secret.tfvars"
 ```  
 
-The plan should look similar to this one:  
 
-```sh
-Terraform will perform the following actions:
-
-  # github_actions_secret.aws_key_id will be created
-  + resource "github_actions_secret" "aws_key_id" {
-      + created_at      = (known after apply)
-      + id              = (known after apply)
-      + plaintext_value = (sensitive value)
-      + repository      = "ppe"
-      + secret_name     = "AWS_ACCESS_KEY_ID"
-      + updated_at      = (known after apply)
-    }
-
-  # github_actions_secret.aws_key_value will be created
-  + resource "github_actions_secret" "aws_key_value" {
-      + created_at      = (known after apply)
-      + id              = (known after apply)
-      + plaintext_value = (sensitive value)
-      + repository      = "ppe"
-      + secret_name     = "AWS_SECRET_ACCESS_KEY"
-      + updated_at      = (known after apply)
-    }
-
-  # github_repository.ppe will be created
-  + resource "github_repository" "ppe" {
-      + allow_auto_merge            = false
-      + allow_merge_commit          = true
-      + allow_rebase_merge          = true
-      + allow_squash_merge          = true
-      + archived                    = false
-      + auto_init                   = true
-      + default_branch              = (known after apply)
-      + delete_branch_on_merge      = false
-      + description                 = "Super Popular OSS Repo"
-      + etag                        = (known after apply)
-      + full_name                   = (known after apply)
-      + git_clone_url               = (known after apply)
-      + has_issues                  = true
-      + html_url                    = (known after apply)
-      + http_clone_url              = (known after apply)
-      + id                          = (known after apply)
-      + merge_commit_message        = "PR_TITLE"
-      + merge_commit_title          = "MERGE_MESSAGE"
-      + name                        = "ppe"
-      + node_id                     = (known after apply)
-      + primary_language            = (known after apply)
-      + private                     = (known after apply)
-      + repo_id                     = (known after apply)
-      + squash_merge_commit_message = "COMMIT_MESSAGES"
-      + squash_merge_commit_title   = "COMMIT_OR_PR_TITLE"
-      + ssh_clone_url               = (known after apply)
-      + svn_url                     = (known after apply)
-      + topics                      = (known after apply)
-      + visibility                  = "private"
-      + web_commit_signoff_required = false
-
-      + security_and_analysis (known after apply)
-    }
-
-  # github_repository_file.github_actions_workflow will be created
-  + resource "github_repository_file" "github_actions_workflow" {
-      + branch              = "main"
-      + commit_message      = (known after apply)
-      + commit_sha          = (known after apply)
-      + content             = <<-EOT
-            name: issue comment workflow
-            on:
-              issue_comment:
-                types: [created]
-            jobs:
-              auto-manage-new-issue:
-                runs-on: ubuntu-latest
-                steps:
-                  - name: Retrieve Issue Information
-                    run: |
-                      echo "NEW ISSUE COMMENT ✍️" && echo ${{ github.event.comment.body }}
-                    env:
-                      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        EOT
-      + file                = ".github/workflows/issue.yaml"
-      + id                  = (known after apply)
-      + overwrite_on_create = false
-      + ref                 = (known after apply)
-      + repository          = "ppe"
-      + sha                 = (known after apply)
-    }
-
-  # github_repository_file.readme will be created
-  + resource "github_repository_file" "readme" {
-      + branch              = "main"
-      + commit_message      = (known after apply)
-      + commit_sha          = (known after apply)
-      + content             = <<-EOT
-            # PPE
-            
-            Super Popular Open Source Repo!
-        EOT
-      + file                = "README.md"
-      + id                  = (known after apply)
-      + overwrite_on_create = true
-      + ref                 = (known after apply)
-      + repository          = "ppe"
-      + sha                 = (known after apply)
-    }
-
-Plan: 5 to add, 0 to change, 0 to destroy.
-
-Changes to Outputs:
-  + repository_url = (known after apply)
-```  
-
-If you are ok with it, apply!
+If you are ok with the plan, apply it!
 
 ```sh
 terraform apply -var-file="secret.tfvars"
@@ -817,6 +549,66 @@ Yes! you succesfully attached an admin policy called `hdnby1gqhk` to  our vulner
 If you type `whoami` once again in the pacu console, you will see much more grants than before!  
 
 With this new policy you can basically do whatever you want across all aws resources 😈 😈 😈 
+
+As an attacker your work is done!    
+Now you can basically do whatever you want on the aws account, do not forget to implement some persistence mechanism like creating new resources (lambda functions, users, roles etc.).  
+
+## Bonus: DEFENSE
+
+
+Detecting *lateral movement* and *privilege escalation* on AWS can be effectively achieved by analyzing [*CloudTrail*](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html) logs, which capture API calls and user activities across your AWS environment.  
+Blue teams can leverage services and integrations like for real-time analysis and visualization of CloudTrail data.  
+By setting up specific queries, security analysts can identify anomalous patterns, such as unusual cross-account access, unexpected instance launches, or excessive permission changes.  
+The [*integration of CloudTrail with ElasticSearch*](https://www.elastic.co/docs/current/integrations/aws/cloudtrail), for example, enables efficient searching and alerting on potential security threats, allowing teams to respond swiftly to suspicious activities indicative of lateral movement or privilege escalation attempts.  
+
+
+Via the `vulnerable-iam-user` user, let's check if there are some active trails.  
+A *trail* is a user-created audit definition that can capture one or more types of events.  
+Unlike Event history, CloudTrail trail logs are not limited to 90 days of retention.  
+They can be delivered to an S3 bucket or AWS CloudWatch Logs and configured to send SNS notifications when a particular event happens:  
+
+```sh
+aws cloudtrail describe-trails
+```  
+
+output:  
+```json
+{
+    "trailList": [
+        {
+            "Name": "detection",
+            "S3BucketName": "s3-bucket-cloudtrail-attack-demo-3412",
+            "S3KeyPrefix": "prefix",
+            "IncludeGlobalServiceEvents": true,
+            "IsMultiRegionTrail": false,
+            "HomeRegion": "eu-north-1",
+            "TrailARN": "arn:aws:cloudtrail:eu-north-1:<account-id-here>:trail/detection",
+            "LogFileValidationEnabled": false,
+            "HasCustomEventSelectors": false,
+            "HasInsightSelectors": false,
+            "IsOrganizationTrail": false
+        }
+    ]
+}
+```  
+
+There is one trail.   
+
+
+Retrieve the cloudtrail events associated to both the `ppe-s3-readonly-user` and the `vulnerable-iam-user` users (modify the timespan for the filter):  
+
+```sh
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,AttributeValue=ppe-s3-readonly-user --start-time "2024-07-16T00:00:00Z" --end-time "2024-07-16T23:59:59Z" | jq
+```  
+
+```sh
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=Username,AttributeValue=vulnerable-iam-user --start-time "2024-07-16T00:00:00Z" --end-time "2024-07-16T23:59:59Z" | jq
+```
+
+This will retrieve our recents actions on the aws account with those users.  
+
+
+# The End 😊 👋  
 
 
 

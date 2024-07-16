@@ -4,8 +4,14 @@ variable "aws_region" {
   sensitive   = false
 }
 
-variable "s3_bucket_name" {
-  description = "The name of the s3 bucket" # must be unique!
+variable "s3_bucket_lateral_movement_name" {
+  description = "The name of the s3 bucket for lateral movement" # must be unique!
+  type        = string
+  sensitive   = false
+}
+
+variable "s3_bucket_cloudtrail_name" {
+  description = "The name of the s3 bucket for cloudtrail" # must be unique!
   type        = string
   sensitive   = false
 }
