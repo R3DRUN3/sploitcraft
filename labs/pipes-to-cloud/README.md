@@ -44,7 +44,7 @@ You will use `terraform` for this task.
 ### aws setup
 
 First you will setup the required aws environment.  
-You will create two *S3* buckets, one *CloudTrail* instance and two *IAM* users (along with required IAM policies).  
+You will create two *S3* buckets, one *CloudTrail trail* and two *IAM* users (along with required IAM policies).  
 
 
 Move to the `infra/aws` directory and create a new file called `secret.tfvars`.  
