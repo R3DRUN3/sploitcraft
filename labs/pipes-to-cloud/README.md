@@ -550,7 +550,7 @@ If you type `whoami` once again in the pacu console, you will see much more gran
 
 With this new policy you can basically do whatever you want across all aws resources 😈 😈 😈 
 
-As an attacker your work is done!    
+As an attacker your job here is done!    
 Now you can basically do whatever you want on the aws account, do not forget to implement some persistence mechanism like creating new resources (lambda functions, users, roles etc.).  
 
 ## Bonus: DEFENSE
