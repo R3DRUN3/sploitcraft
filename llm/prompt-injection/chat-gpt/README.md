@@ -1,6 +1,6 @@
-# CHAT  GPT PROMPT INJECTION
+# CHAT-GPT PROMPT INJECTION
 
-This directory collects demonstration on how to get chatGPT to misbehave via prompt injection. 
+This directory collects demonstration on how to get ChatGPT to misbehave via prompt injection. 
 
 ## Scenario 1 (Tested with GPT4 and 4o)
 poem.txt content:  
