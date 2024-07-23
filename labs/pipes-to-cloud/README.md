@@ -5,7 +5,7 @@ Hack your way from Github Action pipelines to AWS!
 ## Abstract
 This lab enables provisioning of all necessary infrastructure for demonstrating an attack scenario in which a threat actor starts by compromising a [*Github Action*](https://github.com/features/actions), performs lateral movement to an [*AWS*](https://aws.amazon.com/) account and, eventually, escalates privileges to aws administrator.  
 
-Specifically, the attack comprises the following phases:  
+Specifically, the attack comprises the following kill chain:  
 
 1. Injection of a malicious comment into a Github issue to trigger a Github Action that initiates a reverse shell ([*Poisoned Pipeline Execution*](../../ci-cd/ppe/README.md)). 
 
