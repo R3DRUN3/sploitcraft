@@ -11,6 +11,9 @@
 ## 📚 About 
 **SploitCraft**  is a curated collection of security exploits, penetration testing techniques, and vulnerability demonstrations.  
 This repository is intended to help professionals and enthusiasts understand and demonstrate the latest in cybersecurity threats and offensive techniques.  
+<br/>
+If you find value in this content, please consider leaving a ⭐ and contributing to it 😊  
+
 
 ## 🗂️ Repository Structure 
 
