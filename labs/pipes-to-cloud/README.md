@@ -173,6 +173,21 @@ Now you can proceed with the attack! 💪
 
 ## ATTACK DEMONSTRATION 
 
+>**NOTE**  
+>Before we begin our attack simulation, it's important to emphasize that, while we will demonstrate each step manually and sequentially,  
+>real-world *Advanced Persistent Threats* (APTs) employ sophisticated techniques and automation (such as botnets and scripts)  
+> that can enable them to complete the entire Cyber Kill Chain demonstrated here in less than a minute.  
+>One such technique involves automating the monitoring of newly created public repositories on GitHub.  
+>The list of these repositories can be obtained, for instance, using the following command:  
+```sh
+curl -L \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.github.com/events | jq '[.[] | select(.type == "CreateEvent")]'
+```  
+
+### The Attack Begins
+
 Add a new comment to the issue:  
 
 ![first-comment](./images/first-comment.png)  
