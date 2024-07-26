@@ -10,7 +10,9 @@
 
 
 
-This project demonstrates how to perform dataset poisoning on a sentiment analysis model using a synthetic dataset.  
+This project demonstrates how to perform dataset poisoning on a sentiment analysis model using a synthetic dataset. 
+For a demo of data poisoning on a "text-to-text" generative model, take a look at [*this*](../text-to-text-poisoning/) directory.  
+ 
 The demonstration includes the following steps:  
 
 1. Using a pre-trained sentiment analysis model.  
