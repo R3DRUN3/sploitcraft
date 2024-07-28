@@ -1,0 +1,148 @@
+2024-07-28 10:10:30,453  INFO  invoked
+2024-07-28 10:10:30,453  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:10:30,459  DEBUG  args - raw argument string received: ['--list_probes']
+2024-07-28 10:10:30,459  DEBUG  args - full argparse: Namespace(verbose=0, report_prefix=None, narrow_output=False, parallel_requests=False, parallel_attempts=False, seed=None, deprefix=True, eval_threshold=0.5, generations=10, config=None, model_type=None, model_name=None, generator_option_file=None, generator_options=None, probes='all', probe_option_file=None, probe_options=None, probe_tags=None, detectors='auto', extended_detectors=False, buffs=None, taxonomy=None, plugin_info=None, list_probes=True, list_detectors=False, list_generators=False, list_buffs=False, list_config=False, version=False, report=None, interactive=False, generate_autodan=False, **{'interactive.py': False})
+2024-07-28 10:10:30,460  DEBUG  no site config found at: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/garak.site.yaml
+2024-07-28 10:10:30,460  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:10:30,462  DEBUG  args - cli_args&commands stored: Namespace(list_probes=True, verbose=0, list_detectors=False, list_generators=False, list_buffs=False, list_config=False, plugin_info=None, interactive=False, report=None, version=False)
+2024-07-28 10:10:30,462  DEBUG  non-config params: [('list_probes', True), ('list_detectors', False), ('list_generators', False), ('list_buffs', False), ('list_config', False), ('plugin_info', None), ('report', None), ('version', False)]
+2024-07-28 10:10:30,475  INFO  started at 2024-07-28T10:10:30.451610
+2024-07-28 10:10:30,475  INFO  reporting to garak_runs/garak.32c72b65-2b90-426f-9877-4bc1aa97861c.report.jsonl
+2024-07-28 10:11:02,381  INFO  invoked
+2024-07-28 10:11:02,381  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:11:02,387  DEBUG  args - raw argument string received: ['--model_type', 'huggingface', '--model_name', 'gpt2', '--probes', 'dan.Dan_11_0']
+2024-07-28 10:11:02,387  DEBUG  args - full argparse: Namespace(verbose=0, report_prefix=None, narrow_output=False, parallel_requests=False, parallel_attempts=False, seed=None, deprefix=True, eval_threshold=0.5, generations=10, config=None, model_type='huggingface', model_name='gpt2', generator_option_file=None, generator_options=None, probes='dan.Dan_11_0', probe_option_file=None, probe_options=None, probe_tags=None, detectors='auto', extended_detectors=False, buffs=None, taxonomy=None, plugin_info=None, list_probes=False, list_detectors=False, list_generators=False, list_buffs=False, list_config=False, version=False, report=None, interactive=False, generate_autodan=False, **{'interactive.py': False})
+2024-07-28 10:11:02,387  DEBUG  no site config found at: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/garak.site.yaml
+2024-07-28 10:11:02,387  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:11:02,389  DEBUG  args - cli_args&commands stored: Namespace(model_type='huggingface', model_name='gpt2', probes='dan.Dan_11_0', verbose=0, list_detectors=False, list_probes=False, list_generators=False, list_buffs=False, list_config=False, plugin_info=None, interactive=False, report=None, version=False)
+2024-07-28 10:11:02,389  DEBUG  non-config params: [('probes', 'dan.Dan_11_0'), ('list_detectors', False), ('list_probes', False), ('list_generators', False), ('list_buffs', False), ('list_config', False), ('plugin_info', None), ('report', None), ('version', False)]
+2024-07-28 10:11:02,394  INFO  started at 2024-07-28T10:11:02.379614
+2024-07-28 10:11:02,395  INFO  reporting to garak_runs/garak.00754cea-8873-4a0f-a97a-83dddcba2ac3.report.jsonl
+2024-07-28 10:11:03,969  INFO  generator init: <garak.generators.huggingface.Pipeline object at 0x7f08c827b5d0>
+2024-07-28 10:11:04,002  DEBUG  Using CPU, torch.cuda.is_available() returned False
+2024-07-28 10:11:04,003  DEBUG  Starting new HTTPS connection (1): huggingface.co:443
+2024-07-28 10:11:04,200  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/config.json HTTP/11" 200 0
+2024-07-28 10:11:04,214  DEBUG  Attempting to acquire lock 139671975383888 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/10c66461e4c109db5a2196bff4bb59be30396ed8.lock
+2024-07-28 10:11:04,215  DEBUG  Lock 139671975383888 acquired on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/10c66461e4c109db5a2196bff4bb59be30396ed8.lock
+2024-07-28 10:11:04,357  DEBUG  https://huggingface.co:443 "GET /gpt2/resolve/main/config.json HTTP/11" 200 665
+2024-07-28 10:11:04,365  DEBUG  Attempting to release lock 139671975383888 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/10c66461e4c109db5a2196bff4bb59be30396ed8.lock
+2024-07-28 10:11:04,365  DEBUG  Lock 139671975383888 released on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/10c66461e4c109db5a2196bff4bb59be30396ed8.lock
+2024-07-28 10:11:04,582  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/model.safetensors HTTP/11" 302 0
+2024-07-28 10:11:04,585  DEBUG  Attempting to acquire lock 139673576010704 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707.lock
+2024-07-28 10:11:04,586  DEBUG  Lock 139673576010704 acquired on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707.lock
+2024-07-28 10:11:04,589  DEBUG  Starting new HTTPS connection (1): cdn-lfs.huggingface.co:443
+2024-07-28 10:11:04,708  DEBUG  https://cdn-lfs.huggingface.co:443 "GET /gpt2/248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707?response-content-disposition=inline%3B+filename*%3DUTF-8%27%27model.safetensors%3B+filename%3D%22model.safetensors%22%3B&Expires=1722413464&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTcyMjQxMzQ2NH19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy5odWdnaW5nZmFjZS5jby9ncHQyLzI0OGRmYzM5MTE4NjllYzQ5M2M3NmU2NWJmMmZjZjdmNjE1ODI4YjAyNTRjMTJiNDczMTgyZjBmODFkM2E3MDc~cmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qIn1dfQ__&Signature=T2ug-HrAAttwa85IOP3QZi0S~VrnTruh8tDHWmCLhlyq8JAw7Loc7tN4Ft2nvSqQHztpQwvuiL2rghFqFKP5WNOUQJk80duUffwfFcwWRPM0fwsa3Oz-Q0n6m96ogvwEVbzGXsvU8OhdPEBOEeS3E2wNwnbpP0Rs-JeP9n8ZUSNpk5m3Qf4J1ua7svXTcBOpdLPRR0bs61iQ-ZgrqvnMAQH0ftkUqfFxlNC-ugUwGHfNJY28LF9Qu8377IWB2QpS~~QOeG0oCcF8gRbLiVDpALb4n9oIo0lU14LhJTExvFA82fy4YFGrK~1bB6-e6wcsYUcDNW2NqzlMFk0ugveqQA__&Key-Pair-Id=K3ESJI6DHPFC7 HTTP/11" 200 548105171
+2024-07-28 10:13:44,130  DEBUG  Attempting to release lock 139673576010704 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707.lock
+2024-07-28 10:13:44,130  DEBUG  Lock 139673576010704 released on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707.lock
+2024-07-28 10:13:44,734  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/generation_config.json HTTP/11" 200 0
+2024-07-28 10:13:44,737  DEBUG  Attempting to acquire lock 139673576080464 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/3dc481ecc3b2c47a06ab4e20dba9d7f4b447bdf3.lock
+2024-07-28 10:13:44,737  DEBUG  Lock 139673576080464 acquired on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/3dc481ecc3b2c47a06ab4e20dba9d7f4b447bdf3.lock
+2024-07-28 10:13:44,937  DEBUG  https://huggingface.co:443 "GET /gpt2/resolve/main/generation_config.json HTTP/11" 200 124
+2024-07-28 10:13:44,940  DEBUG  Attempting to release lock 139673576080464 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/3dc481ecc3b2c47a06ab4e20dba9d7f4b447bdf3.lock
+2024-07-28 10:13:44,940  DEBUG  Lock 139673576080464 released on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/3dc481ecc3b2c47a06ab4e20dba9d7f4b447bdf3.lock
+2024-07-28 10:13:45,074  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/tokenizer_config.json HTTP/11" 200 0
+2024-07-28 10:13:45,075  DEBUG  Attempting to acquire lock 139671965234192 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/be4d21d94f3b4687e5a54d84bf6ab46ed0f8defd.lock
+2024-07-28 10:13:45,076  DEBUG  Lock 139671965234192 acquired on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/be4d21d94f3b4687e5a54d84bf6ab46ed0f8defd.lock
+2024-07-28 10:13:45,245  DEBUG  https://huggingface.co:443 "GET /gpt2/resolve/main/tokenizer_config.json HTTP/11" 200 26
+2024-07-28 10:13:45,250  DEBUG  Attempting to release lock 139671965234192 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/be4d21d94f3b4687e5a54d84bf6ab46ed0f8defd.lock
+2024-07-28 10:13:45,250  DEBUG  Lock 139671965234192 released on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/be4d21d94f3b4687e5a54d84bf6ab46ed0f8defd.lock
+2024-07-28 10:13:45,448  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/vocab.json HTTP/11" 200 0
+2024-07-28 10:13:45,450  DEBUG  Attempting to acquire lock 139671963441808 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/1f1d9aaca301414e7f6c9396df506798ff4eb9a6.lock
+2024-07-28 10:13:45,450  DEBUG  Lock 139671963441808 acquired on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/1f1d9aaca301414e7f6c9396df506798ff4eb9a6.lock
+2024-07-28 10:13:45,654  DEBUG  https://huggingface.co:443 "GET /gpt2/resolve/main/vocab.json HTTP/11" 200 1042301
+2024-07-28 10:13:46,105  DEBUG  Attempting to release lock 139671963441808 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/1f1d9aaca301414e7f6c9396df506798ff4eb9a6.lock
+2024-07-28 10:13:46,106  DEBUG  Lock 139671963441808 released on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/1f1d9aaca301414e7f6c9396df506798ff4eb9a6.lock
+2024-07-28 10:13:46,268  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/merges.txt HTTP/11" 200 0
+2024-07-28 10:13:46,270  DEBUG  Attempting to acquire lock 139673576083152 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/226b0752cac7789c48f0cb3ec53eda48b7be36cc.lock
+2024-07-28 10:13:46,270  DEBUG  Lock 139673576083152 acquired on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/226b0752cac7789c48f0cb3ec53eda48b7be36cc.lock
+2024-07-28 10:13:46,473  DEBUG  https://huggingface.co:443 "GET /gpt2/resolve/main/merges.txt HTTP/11" 200 456318
+2024-07-28 10:13:46,761  DEBUG  Attempting to release lock 139673576083152 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/226b0752cac7789c48f0cb3ec53eda48b7be36cc.lock
+2024-07-28 10:13:46,762  DEBUG  Lock 139673576083152 released on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/226b0752cac7789c48f0cb3ec53eda48b7be36cc.lock
+2024-07-28 10:13:46,985  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/tokenizer.json HTTP/11" 200 0
+2024-07-28 10:13:46,986  DEBUG  Attempting to acquire lock 139671963446416 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/4b988bccc9dc5adacd403c00b4704976196548f8.lock
+2024-07-28 10:13:46,987  DEBUG  Lock 139671963446416 acquired on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/4b988bccc9dc5adacd403c00b4704976196548f8.lock
+2024-07-28 10:13:47,191  DEBUG  https://huggingface.co:443 "GET /gpt2/resolve/main/tokenizer.json HTTP/11" 200 1355256
+2024-07-28 10:13:47,683  DEBUG  Attempting to release lock 139671963446416 on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/4b988bccc9dc5adacd403c00b4704976196548f8.lock
+2024-07-28 10:13:47,683  DEBUG  Lock 139671963446416 released on /home/r3d/.cache/huggingface/hub/.locks/models--gpt2/4b988bccc9dc5adacd403c00b4704976196548f8.lock
+2024-07-28 10:13:47,907  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/added_tokens.json HTTP/11" 404 0
+2024-07-28 10:13:48,115  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/special_tokens_map.json HTTP/11" 404 0
+2024-07-28 10:13:48,188  INFO  harness init: <garak.harnesses.probewise.ProbewiseHarness object at 0x7f07ebd9e390>
+2024-07-28 10:13:48,188  INFO  probe queue: probes.dan.Dan_11_0
+2024-07-28 10:13:48,189  INFO  probe init: {self}
+2024-07-28 10:13:48,189  DEBUG  deprecation warning - probe probes.dan.Dan_11_0 using recommend_detector instead of primary_detector
+2024-07-28 10:13:48,190  INFO  detector init: <garak.detectors.dan.DAN object at 0x7f07e3c131d0>
+2024-07-28 10:13:48,190  INFO  detector init: <garak.detectors.mitigation.MitigationBypass object at 0x7f07e3c13c10>
+2024-07-28 10:13:48,190  INFO  harness init: <garak.harnesses.base.Harness object at 0x7f0849f4c450>
+2024-07-28 10:13:48,190  DEBUG  harness: probe start for garak.probes.dan.Dan_11_0
+2024-07-28 10:13:48,190  DEBUG  probe execute: <garak.probes.dan.Dan_11_0 object at 0x7f07e9c42550>
+2024-07-28 10:14:23,658  ERROR  index out of range in self
+2024-07-28 10:14:23,663  DEBUG  probe return: <garak.probes.dan.Dan_11_0 object at 0x7f07e9c42550> with 1 attempts
+2024-07-28 10:14:23,663  DEBUG  harness: run detector garak.detectors.dan.DAN
+2024-07-28 10:14:23,664  DEBUG  harness: run detector garak.detectors.mitigation.MitigationBypass
+2024-07-28 10:14:23,665  DEBUG  harness: probe list iteration completed
+2024-07-28 10:14:23,665  INFO  run complete, ending
+2024-07-28 10:14:23,780  INFO  probe init: {self}
+2024-07-28 10:14:23,780  INFO  detector init: <garak.detectors.dan.DAN object at 0x7f07e29c9610>
+2024-07-28 10:14:23,780  INFO  detector init: <garak.detectors.mitigation.MitigationBypass object at 0x7f07e3178fd0>
+2024-07-28 10:14:23,781  INFO  garak run complete in 201.29s
+2024-07-28 10:20:04,271  INFO  invoked
+2024-07-28 10:20:04,272  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:20:04,278  DEBUG  args - raw argument string received: ['--list_probes', '-h']
+2024-07-28 10:20:20,541  INFO  invoked
+2024-07-28 10:20:20,541  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:20:20,547  DEBUG  args - raw argument string received: ['--list_probes', 'dan']
+2024-07-28 10:21:49,247  INFO  invoked
+2024-07-28 10:21:49,247  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:21:49,253  DEBUG  args - raw argument string received: ['--list_probes']
+2024-07-28 10:21:49,253  DEBUG  args - full argparse: Namespace(verbose=0, report_prefix=None, narrow_output=False, parallel_requests=False, parallel_attempts=False, seed=None, deprefix=True, eval_threshold=0.5, generations=10, config=None, model_type=None, model_name=None, generator_option_file=None, generator_options=None, probes='all', probe_option_file=None, probe_options=None, probe_tags=None, detectors='auto', extended_detectors=False, buffs=None, taxonomy=None, plugin_info=None, list_probes=True, list_detectors=False, list_generators=False, list_buffs=False, list_config=False, version=False, report=None, interactive=False, generate_autodan=False, **{'interactive.py': False})
+2024-07-28 10:21:49,253  DEBUG  no site config found at: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/garak.site.yaml
+2024-07-28 10:21:49,253  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:21:49,255  DEBUG  args - cli_args&commands stored: Namespace(list_probes=True, verbose=0, list_detectors=False, list_generators=False, list_buffs=False, list_config=False, plugin_info=None, interactive=False, report=None, version=False)
+2024-07-28 10:21:49,255  DEBUG  non-config params: [('list_probes', True), ('list_detectors', False), ('list_generators', False), ('list_buffs', False), ('list_config', False), ('plugin_info', None), ('report', None), ('version', False)]
+2024-07-28 10:21:49,261  INFO  started at 2024-07-28T10:21:49.245618
+2024-07-28 10:21:49,261  INFO  reporting to garak_runs/garak.54bf2d27-130a-4de6-85bf-009e0611a550.report.jsonl
+2024-07-28 10:23:14,163  INFO  invoked
+2024-07-28 10:23:14,164  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:23:14,170  DEBUG  args - raw argument string received: ['--model_type', 'huggingface', '--model_name', 'gpt2', '--probes', 'encoding.InjectBase64']
+2024-07-28 10:23:14,170  DEBUG  args - full argparse: Namespace(verbose=0, report_prefix=None, narrow_output=False, parallel_requests=False, parallel_attempts=False, seed=None, deprefix=True, eval_threshold=0.5, generations=10, config=None, model_type='huggingface', model_name='gpt2', generator_option_file=None, generator_options=None, probes='encoding.InjectBase64', probe_option_file=None, probe_options=None, probe_tags=None, detectors='auto', extended_detectors=False, buffs=None, taxonomy=None, plugin_info=None, list_probes=False, list_detectors=False, list_generators=False, list_buffs=False, list_config=False, version=False, report=None, interactive=False, generate_autodan=False, **{'interactive.py': False})
+2024-07-28 10:23:14,170  DEBUG  no site config found at: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/garak.site.yaml
+2024-07-28 10:23:14,170  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:23:14,173  DEBUG  args - cli_args&commands stored: Namespace(model_type='huggingface', model_name='gpt2', probes='encoding.InjectBase64', verbose=0, list_detectors=False, list_probes=False, list_generators=False, list_buffs=False, list_config=False, plugin_info=None, interactive=False, report=None, version=False)
+2024-07-28 10:23:14,173  DEBUG  non-config params: [('probes', 'encoding.InjectBase64'), ('list_detectors', False), ('list_probes', False), ('list_generators', False), ('list_buffs', False), ('list_config', False), ('plugin_info', None), ('report', None), ('version', False)]
+2024-07-28 10:23:14,181  INFO  started at 2024-07-28T10:23:14.162365
+2024-07-28 10:23:14,181  INFO  reporting to garak_runs/garak.3dd010da-9b9b-4b1b-8a65-033caf5e58c4.report.jsonl
+2024-07-28 10:23:15,766  INFO  generator init: <garak.generators.huggingface.Pipeline object at 0x7f8a7e5b5f90>
+2024-07-28 10:23:15,798  DEBUG  Using CPU, torch.cuda.is_available() returned False
+2024-07-28 10:23:15,800  DEBUG  Starting new HTTPS connection (1): huggingface.co:443
+2024-07-28 10:23:15,989  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/config.json HTTP/11" 200 0
+2024-07-28 10:23:16,331  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/generation_config.json HTTP/11" 200 0
+2024-07-28 10:23:16,420  INFO  harness init: <garak.harnesses.probewise.ProbewiseHarness object at 0x7f89a00e9510>
+2024-07-28 10:23:16,421  INFO  probe queue: probes.encoding.InjectBase64
+2024-07-28 10:23:16,422  INFO  probe init: {self}
+2024-07-28 10:23:16,422  INFO  detector init: <garak.detectors.encoding.DecodeMatch object at 0x7f899fbf2910>
+2024-07-28 10:23:16,422  INFO  harness init: <garak.harnesses.base.Harness object at 0x7f89a19fb450>
+2024-07-28 10:23:16,422  DEBUG  harness: probe start for garak.probes.encoding.InjectBase64
+2024-07-28 10:23:16,422  DEBUG  probe execute: <garak.probes.encoding.InjectBase64 object at 0x7f8a00122fd0>
+2024-07-28 10:27:47,632  INFO  invoked
+2024-07-28 10:27:47,632  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:27:47,638  DEBUG  args - raw argument string received: ['--model_type', 'huggingface', '--model_name', 'gpt2', '--probes', 'leakreplay']
+2024-07-28 10:27:47,639  DEBUG  args - full argparse: Namespace(verbose=0, report_prefix=None, narrow_output=False, parallel_requests=False, parallel_attempts=False, seed=None, deprefix=True, eval_threshold=0.5, generations=10, config=None, model_type='huggingface', model_name='gpt2', generator_option_file=None, generator_options=None, probes='leakreplay', probe_option_file=None, probe_options=None, probe_tags=None, detectors='auto', extended_detectors=False, buffs=None, taxonomy=None, plugin_info=None, list_probes=False, list_detectors=False, list_generators=False, list_buffs=False, list_config=False, version=False, report=None, interactive=False, generate_autodan=False, **{'interactive.py': False})
+2024-07-28 10:27:47,639  DEBUG  no site config found at: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/garak.site.yaml
+2024-07-28 10:27:47,639  DEBUG  Loading configs from: /home/r3d/Desktop/personal/github/sploitcraft/sploitcraft/llm/security-audit/garak-env/lib/python3.11/site-packages/garak/resources/garak.core.yaml
+2024-07-28 10:27:47,641  DEBUG  args - cli_args&commands stored: Namespace(model_type='huggingface', model_name='gpt2', probes='leakreplay', verbose=0, list_detectors=False, list_probes=False, list_generators=False, list_buffs=False, list_config=False, plugin_info=None, interactive=False, report=None, version=False)
+2024-07-28 10:27:47,641  DEBUG  non-config params: [('probes', 'leakreplay'), ('list_detectors', False), ('list_probes', False), ('list_generators', False), ('list_buffs', False), ('list_config', False), ('plugin_info', None), ('report', None), ('version', False)]
+2024-07-28 10:27:47,646  INFO  started at 2024-07-28T10:27:47.630439
+2024-07-28 10:27:47,646  INFO  reporting to garak_runs/garak.5a8eb40d-601f-4335-a453-93ca5d97c08b.report.jsonl
+2024-07-28 10:27:49,246  INFO  generator init: <garak.generators.huggingface.Pipeline object at 0x7f98baf8de90>
+2024-07-28 10:27:49,280  DEBUG  Using CPU, torch.cuda.is_available() returned False
+2024-07-28 10:27:49,282  DEBUG  Starting new HTTPS connection (1): huggingface.co:443
+2024-07-28 10:27:49,485  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/config.json HTTP/11" 200 0
+2024-07-28 10:27:49,840  DEBUG  https://huggingface.co:443 "HEAD /gpt2/resolve/main/generation_config.json HTTP/11" 200 0
+2024-07-28 10:27:50,106  INFO  harness init: <garak.harnesses.probewise.ProbewiseHarness object at 0x7f98ba0ed210>
+2024-07-28 10:27:50,106  INFO  probe queue: probes.leakreplay.GuardianCloze probes.leakreplay.GuardianComplete probes.leakreplay.LiteratureCloze80 probes.leakreplay.LiteratureComplete80 probes.leakreplay.NYTCloze probes.leakreplay.NYTComplete
+2024-07-28 10:27:50,106  INFO  probe init: {self}
+2024-07-28 10:27:50,107  DEBUG  deprecation warning - probe probes.leakreplay.GuardianCloze using recommend_detector instead of primary_detector
+2024-07-28 10:27:50,107  INFO  detector init: <garak.detectors.base.TriggerListDetector object at 0x7f98b2d82810>
+2024-07-28 10:27:50,107  INFO  harness init: <garak.harnesses.base.Harness object at 0x7f98b93dd690>
+2024-07-28 10:27:50,107  DEBUG  harness: probe start for garak.probes.leakreplay.GuardianCloze
+2024-07-28 10:27:50,107  DEBUG  probe execute: <garak.probes.leakreplay.GuardianCloze object at 0x7f98b2450050>
