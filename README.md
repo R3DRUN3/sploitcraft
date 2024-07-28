@@ -20,6 +20,10 @@ If you find value in this content, please consider leaving a ⭐ and contributin
 The repository is organized into folders based on specific topics.  
 Each folder contains directories and detailed READMEs with step-by-step instructions to follow along:  
 The idea is to organize topics by reference and to have guides that are as self-contained as possible, ensuring they are easy to consume and replicate. 
+> [!NOTE]   
+> As the project development progresses, the directory structure may change.  
+> Ensure you always perform a git pull to obtain the latest version available.  
+
 
 ## Disclaimer 
 
