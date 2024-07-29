@@ -1,6 +1,9 @@
 # From the Pipes to the Clouds
 
-Hack your way from Github Action pipelines to AWS!
+Hack your way from Github Action pipelines to AWS!  
+
+![logo](./images/pipes-to-cloud-labs-logo.png)  
+
 
 ## Abstract
 This lab enables provisioning of all necessary infrastructure for demonstrating an attack scenario in which a threat actor starts by compromising a [*Github Action*](https://github.com/features/actions), performs lateral movement to an [*AWS*](https://aws.amazon.com/) account and, eventually, escalates privileges to aws administrator.  
