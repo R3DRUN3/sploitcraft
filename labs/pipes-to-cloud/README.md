@@ -2,7 +2,7 @@
 
 Hack your way from Github Action pipelines to AWS!  
 
-![logo](./images/pipes-to-cloud-labs-logo.png)  
+<img src="./images/pipes-to-cloud-labs-logo.png" alt="logo" width="300" height="300"/> 
 
 
 ## Abstract
