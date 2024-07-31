@@ -14,6 +14,15 @@ This repository is intended to help professionals and enthusiasts understand and
 <br/>
 If you find value in this content, please consider leaving a ⭐ and contributing to it 😊  
 
+## Disclaimer 
+
+> [!WARNING]  
+> This repository is intended for educational purposes only.  
+> All demos and PoCs are designed to be used in controlled, legal environments.  
+> Unauthorized use of the techniques and tools provided in this repository is strictly prohibited.  
+> **The authors assume no responsibility for the weaponization of this content**.  
+
+
 
 ## 🗂️ Repository Structure 
 
@@ -22,22 +31,13 @@ Each folder contains directories and detailed READMEs with step-by-step instruct
 The idea is to organize topics by reference and to have guides that are as self-contained as possible, ensuring they are easy to consume and replicate. 
 > [!NOTE]   
 > As the project development progresses, the directory structure may change.  
-> Ensure you always perform a git pull to obtain the latest version available.  
-
-
-## Disclaimer 
-
-> [!WARNING]  
-> This repository is intended for educational purposes only.  
-> All demos and PoCs are designed to be used in controlled, legal environments.  
-> Unauthorized use of the techniques and tools provided in this repository is strictly prohibited.  
-> **The authors assume no responsibility for the weaponization of this content**. 
+> Ensure you always perform a `git pull` to obtain the latest version available.  
 
 
 ## 🤝 Contributing 
 
-We welcome contributions from the community!  
-If you want to add a new proof of concept, feel free to submit a pull request.   
+I welcome contributions from the community!   
+If you want to add a new proof of concept or expand upon an existing one, feel free to submit a pull request.   
 Please ensure that your contributions adhere to the current structure and format of the repository.  
 
 
