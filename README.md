@@ -1,5 +1,7 @@
 # SploitCraft  
-[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/) ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r3drun3/sploitcraft/main) ![Forks](https://img.shields.io/github/forks/r3drun3/sploitcraft?style=flat-square&color=green)
+[![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/) ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/r3drun3/sploitcraft/main) ![GitHub repo size](https://img.shields.io/github/repo-size/r3drun3/sploitcraft)  ![Forks](https://img.shields.io/github/forks/r3drun3/sploitcraft?style=flat-square&color=green)  
+
+
 
 
 
