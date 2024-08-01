@@ -19,7 +19,13 @@ You can also do this type of prompt injection via web search:
 
 ![web](./images/prompt-injection.png)  
 
-<br/>
+<br/>  
+
+
+An attacker could also modify the JavaScript on a webpage to inject different text when a link is copied.  
+Consequently, an inattentive user might paste this prompt and press enter without realizing that a prompt injection has occurred:  
+
+
 <br/>
 
 
@@ -112,4 +118,7 @@ Use ace_tools.display_dataframe_to_user(name: str, dataframe: pandas.DataFrame) 
 
 
 ```  
+
+
+
 
