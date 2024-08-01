@@ -26,6 +26,11 @@ An attacker could also modify the JavaScript on a webpage to inject different te
 Consequently, an inattentive user might paste this prompt and press enter without realizing that a prompt injection has occurred:  
 
 
+https://github.com/user-attachments/assets/e7cf789f-d504-4f64-b405-1e2460eecc6c
+
+
+
+
 <br/>
 
 
