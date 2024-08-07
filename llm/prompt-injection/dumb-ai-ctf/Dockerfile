@@ -13,5 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
+# Download the model during the build phase
+RUN python -c "from transformers import GPT2LMHeadModel, GPT2Tokenizer; GPT2LMHeadModel.from_pretrained('0xr3d/dumb-ai-ctf'); GPT2Tokenizer.from_pretrained('0xr3d/dumb-ai-ctf')"
+
 # Command to run the application
 CMD ["python", "query_model.py"]
