@@ -1,6 +1,6 @@
 # CAPTURE THE FLAG
 
-This directory lists walkthroughs of Capture The Flag challenges:  
+This directory lists my own walkthroughs and/or implementations of Capture The Flag challenges:  
 
 - [*AWS - S3*](https://github.com/R3DRUN3/cyberhall/tree/main/CTF/flaws-cloud)
 - [*Hack The Box*](https://github.com/R3DRUN3/cyberhall/tree/main/CTF/htb)
