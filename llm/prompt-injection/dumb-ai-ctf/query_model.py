@@ -14,16 +14,26 @@ if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
 # Function to generate text with the fine-tuned model
-def generate_text(prompt, model, tokenizer, max_length=50):
+def generate_text(prompt, model, tokenizer, max_length=60):
     inputs = tokenizer(prompt, return_tensors="pt", padding=True)
     outputs = model.generate(
         input_ids=inputs['input_ids'],
         attention_mask=inputs['attention_mask'],
         max_length=max_length,
         num_return_sequences=1,
-        pad_token_id=tokenizer.eos_token_id
+        pad_token_id=tokenizer.eos_token_id,
+        do_sample=True,
+        top_k=6,
+        temperature=0.3,
+        no_repeat_ngram_size=6,  # Prevent repetition of 6-grams
+        num_beams=5  # Beam search for better quality
     )
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+    generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    
+    # Post-process to remove the prompt from the generated text
+    generated_text = generated_text[len(prompt):].strip()
+    
+    return generated_text
 
 def query_model():
     print(f"\n{Fore.CYAN}############# TALK TO THE AI 🦾 #############\n{Style.RESET_ALL}{Fore.YELLOW}Press Ctrl+C to stop ===>\n{Style.RESET_ALL}")
