@@ -60,6 +60,8 @@ docker run --rm -it r3drun3/vulnerable-ai:ctf
 
 
 Example:  
-![aicli](./images/aicli.png)  
+
+
+https://github.com/user-attachments/assets/29acf4b6-87c7-494d-80d7-24ee38656206
 
 
