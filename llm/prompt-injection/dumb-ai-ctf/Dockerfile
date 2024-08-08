@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # Download the model during the build phase
-RUN python -c "from transformers import GPT2LMHeadModel, GPT2Tokenizer; GPT2LMHeadModel.from_pretrained('0xr3d/dumb-ai-ctf'); GPT2Tokenizer.from_pretrained('0xr3d/dumb-ai-ctf')"
+RUN python -c "from transformers import GPT2LMHeadModel, GPT2Tokenizer; GPT2LMHeadModel.from_pretrained('0xr3d/vulnerable-ai'); GPT2Tokenizer.from_pretrained('0xr3d/vulnerable-ai')"
 
 # Copy the rest of the application code into the container
 COPY . .
