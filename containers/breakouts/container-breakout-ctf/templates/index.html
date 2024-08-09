@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Containify File Reader</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        .output {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Welcome to Containify File Reader</h3>
+                        <p class="text-center">Enter the filename to read its contents. Ensure you have the correct permissions.</p>
+                        <form method="post" action="/read">
+                            <div class="form-group">
+                                <label for="filename">Filename</label>
+                                <input type="text" class="form-control" id="filename" name="filename" placeholder="Enter filename" required>
+                            </div>
+                            <button type="submit" class="btn btn-custom btn-block">Read File</button>
+                        </form>
+                        {% if output %}
+                            <div class="output mt-4">
+                                <h5>Contents of "{{ filename }}":</h5>
+                                <pre>{{ output }}</pre>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="footer">
+                    <p>&copy; 2024 Containify, Inc. | <a href="#">Privacy Policy</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
