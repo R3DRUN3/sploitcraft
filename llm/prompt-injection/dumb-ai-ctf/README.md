@@ -45,7 +45,7 @@ Junior ML engineer
 
 
 
-If you want to try this locally, you just need docker.  
+If you want to try this locally, you just need [*docker*](https://hub.docker.com/repository/docker/r3drun3/vulnerable-ai/general).   
 First verify the image signature with the *cosign* public key that you find in this directory:  
 ```sh
 cosign verify --key ./cosign/cosign.pub r3drun3/vulnerable-ai:ctf
