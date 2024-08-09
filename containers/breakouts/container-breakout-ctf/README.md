@@ -6,7 +6,7 @@ You found a web portal, it is an application to read file inside a container, ar
 > WARNING  
 > Put this in a isolated Virtual Machine!!
 
-1. On the host VM, put your flag in /root/flag.txt:  
+1. On the host VM, put your flag in `/root/flag.txt`:  
 ```sh
 echo "CTF{your_flag_content}" > /root/flag.txt
 ```  
