@@ -7,5 +7,5 @@ docker build -t containify . && docker run -d -p 5000:5000 -v /var/run/docker.so
 ```  
 
 
-If you are stuck, follow the [*walkthrough*](./walktrough/README.md).  
+If you are stuck, follow the [*walkthrough*](./walkthrough/README.md).  
   
