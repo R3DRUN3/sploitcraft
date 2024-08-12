@@ -39,14 +39,18 @@ Now you should see the app on your virtual Pixel phone:
 ![agoat](./images/installation.png)  
 
 Click on the app and explore it a bit.  
+
 As you can see there are different scenarios that you can deep dive into in order to discover different kind of misconfigurations and vulnerabilities.  
 If you followed the instructions to setup burp as the proxy for all the http calls from the device, you can also capture it's traffic:  
 ![http](./images/http_traffic.png)  
 ![burp](./images/burp1.png)  
+
+
 As you can see we were able to capture the mobile application http traffic in the same way that we do for web apps.  
 Now let's inspect some of the issues, starting from the "hardcode" one.  
 The application ask to enter a promo code in order to retrieve a product for free:  
 ![hardcode](./images/hardcode_issue_wrong_code.png)  
+
 First we will decompile the .apk file with [*apktool*](https://github.com/iBotPeaches/Apktool):    
 ```sh
 apktool d AndroGoat.apk
@@ -57,6 +61,7 @@ Next we will do some manual static analysis on the pplication files, untill we f
 Let's now procede with another challenge: let's check how the mobile app handles data storage.  
 We begin by creating a new set of credentials via the app feature:  
 ![credentials](./images/save_credentials.png)  
+
 Now let's explore our android device filesystem and search for these credentials.  
 
 Open a root shell on the device with adb:  
@@ -72,7 +77,8 @@ Here is an example of a [*Cross Site Scripting*](../../web/xss/) vuln triggered 
 
 At last we will explore an insecure logging vulnerability:  
 ![error](./images/error.png)  
-From the previous screen we can see that something went bad during the procedure and an error was raised.  
+
+From the previous screen we can observe that something went bad during the procedure and an error was raised.  
 We can check the device log wit adb:  
 ```sh
 adb logcat | grep -e Password -e password
