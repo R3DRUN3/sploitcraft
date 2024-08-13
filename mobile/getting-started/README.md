@@ -41,7 +41,7 @@ Now you should see the app on your virtual Pixel phone:
 Click on the app and explore it a bit.  
 
 As you can see there are different scenarios that you can deep dive into in order to discover different kind of misconfigurations and vulnerabilities.  
-If you followed the instructions to setup burp as the proxy for all the http calls from the device, you can also capture it's traffic:  
+If you followed the instructions to setup burp as the proxy for all the http calls from the device (`adb shell settings put global http_proxy IP_PROXY:PORT`), you can also capture it's traffic:  
 ![http](./images/http_traffic.png)  
 ![burp](./images/burp1.png)  
 
