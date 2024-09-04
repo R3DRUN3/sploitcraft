@@ -7,5 +7,5 @@ This directory lists my own walkthroughs and/or implementations of Capture The F
 - [*Container Breakout*](../containers/breakouts/container-breakout-ctf/)  
 - [*Large Language Model - Prompt Injection*](../llm/prompt-injection/gandalf/README.md)
 - [*My humble attempt to implement a Capture The Flag on Kubernetes*](https://github.com/rooted-io/ctfs/blob/main/k8s/first/README.md)  
-- [*My humble attemp to implement an AI Capture the Flag "from scratch"*](https://github.com/R3DRUN3/sploitcraft/tree/main/llm/prompt-injection/dumb-ai-ctf)  
+- [*My humble attempt to implement an AI Capture the Flag "from scratch"*](https://github.com/R3DRUN3/sploitcraft/tree/main/llm/prompt-injection/dumb-ai-ctf)  
 
