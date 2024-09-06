@@ -156,3 +156,56 @@ terraform init && terraform plan && terraform apply
 
 Example static website:  
 ![website](./images/s3_static-website.png)  
+
+
+Please note that you can achieve the same result by leveraging other trusted providers, like Github.  
+
+You can deploy a static website on-deman via Github Pages with the following terraform file:  
+```hcl
+provider "github" {
+  token = "<your-github-token-here>" # do not hardcode secrets, manage this via a tfvars file
+}
+
+variable "repo_owner" {
+  description = "GitHub username or organization name for the repository owner."
+  type        = string
+}
+
+resource "random_string" "repo_suffix" {
+  length  = 6
+  special = false
+  upper   = false
+  lower   = true
+  numeric = true
+}
+
+resource "github_repository" "static_site_repo" {
+  name        = "static-site-${random_string.repo_suffix.result}" # change website name here
+  description = "A static website deployed on GitHub Pages"
+
+  visibility = "public"
+  auto_init   = true
+
+  pages {
+    source {
+      branch = "main"
+    }
+  }
+}
+
+resource "github_repository_file" "index_html" {
+  repository = github_repository.static_site_repo.name
+  file       = "index.html"
+  content    = file("index.html")
+  branch     = "main"
+}
+
+output "github_pages_url" {
+  value = "https://${var.repo_owner}.github.io/${github_repository.static_site_repo.name}/"
+}
+
+output "notice" {
+  value = "The website might take up to a minute to become reachable at the above URL."
+}
+
+```
