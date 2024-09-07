@@ -235,6 +235,8 @@ In a red teaming engagement, Tailscale can be installed on a compromised machine
 the compromised device becomes part of the attacker's Tailnet, allowing remote connectivity without exposing traffic  
 to the customer's firewall or intrusion detection systems, as it leverages point-to-point encryption.  
 Tailscale's NAT traversal ensures seamless connections even across complex network topologies, enhancing stealth and persistence in post-exploitation phases.  
+Due to its nature, the techniques, and protocols it employs, Tailscale is not trivial to block.  
+Therefore, it is likely that it will not be restricted by the company's network and [*should work out-of-the-box in most cases*](https://tailscale.com/kb/1082/firewall-ports).  
 
 First of all it is recommended to create a new, disposable Google (or Github) Account for every red teaming campaign.  
 Once you have a google account associated to the campaign you can use that in order to [*create a new Tailscale account*](https://login.tailscale.com/start).    
