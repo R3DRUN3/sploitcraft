@@ -1,7 +1,7 @@
 # RED TEAM INFRASTRUCTURE
 
 
-This document contains guidelines on deploying aws infrastructure that can be useful for red teaming campaigns.  
+This document contains guidelines on deploying infrastructure that can be useful for red teaming campaigns.  
 
 ## Table of Contents
 - [Deploying a secure static website via AWS S3 and CloudFront](#deploying-a-secure-static-website-via-aws-s3-and-cloudfront)
