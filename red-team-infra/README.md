@@ -15,7 +15,7 @@ This document contains guidelines on deploying infrastructure that can be useful
 The following Terraform configuration enables the seamless deployment of a static website to AWS S3 in a single step.   
 The only prerequisites are an AWS account and an HTML landing page for the site (*index.hml* file, in the same root as the terraform manifest).  
 
-This setup is particularly useful for red teaming campaigns, serving multiple purposes such as hosting payloads, creating phishing pages or redirects, providing command-and-control (C2) infrastructure, or staging files and logs for exfiltration scenarios.  
+This setup is particularly useful for red teaming campaigns, serving multiple purposes such as hosting payloads, creating phishing pages or redirects.  
 
 
 The resulting website already comes with TLS termination out of the box and it's hosted on the "*.cloudfront.net*" domain:  
