@@ -4,13 +4,13 @@
 This document contains guidelines on deploying infrastructure that can be useful for red teaming campaigns.  
 
 ## Table of Contents
-- [Deploying a secure static website via AWS S3 and CloudFront](#deploying-a-secure-static-website-via-aws-s3-and-cloudfront)
-- [Deploy a Static Website via GitHub Pages](#deploy-a-static-website-via-github-pages)
+- [Deploy a static website via AWS S3 and CloudFront](#deploy-a-static-website-via-aws-s3-and-cloudfront)
+- [Deploy a static website via GitHub Pages](#deploy-a-static-website-via-github-pages)
 - [Maintain persistent access with Tailscale](#maintain-persistent-access-with-tailscale)  
 - [Deploy a Lambda function for data exfiltration](#deploy-a-lambda-function-for-data-exfiltration)  
 
 
-## Deploying a secure static website via AWS S3 and CloudFront  
+## Deploy a static website via AWS S3 and CloudFront  
 
 The following Terraform configuration enables the seamless deployment of a static website to AWS S3 in a single step.   
 The only prerequisites are an AWS account and an HTML landing page for the site (*index.hml* file, in the same root as the terraform manifest).  
@@ -164,7 +164,7 @@ terraform init && terraform plan && terraform apply
 Example static website:  
 ![website](./images/s3_static-website.png)  
 
-## Deploy a Static Website via GitHub Pages  
+## Deploy a static website via GitHub Pages  
 
 Please note that you can achieve the same result by leveraging other trusted providers, like Github.  
 
