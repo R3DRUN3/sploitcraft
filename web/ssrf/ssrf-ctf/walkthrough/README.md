@@ -32,7 +32,7 @@ Submit an url with the correct schema:
 You know from the challenge description that the website can reach other webservices on the same host, try a random port:  
 ![no_connection](./images/no_connection.png)  
 
-Unfortunately no luck, you need to create an automation, for example the following script:  
+Unfortunately no luck, you need to create an automation to scann all the ports, for example the following script:  
 ```sh
 #!/bin/bash
 
