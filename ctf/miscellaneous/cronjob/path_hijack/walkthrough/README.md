@@ -34,7 +34,7 @@ cp /app/flag.txt /app/uploads/flag.txt
 This action will trick the cronjob by subsituting the ls binary with another one that actually copies the flag in the upload path, so that the user can see and download it.  
 
 Upload this payload via the website feature and wait...
-After a mimute you should see the flag in the list of uploaded files and you can download it!!  
+After a minute, once the cronjob has run, you should see the flag in the list of uploaded files, and you can download it! 
 ![payload](./images/payload.png)  
 
 ![flag](./images/flag.png)  
