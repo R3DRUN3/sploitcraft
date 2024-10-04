@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp /app/flag.txt /app/uploads/flag.txt
