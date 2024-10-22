@@ -28,6 +28,9 @@ docker run -it --mount type=bind,source=/home/<your-local-user>/.aws,target=/hom
 Sit back and watch as the agent independently finds the root flag inside a Linux container, despite not having root privileges:  
 
 
+https://github.com/user-attachments/assets/bbf4514e-b6bb-422a-8ba7-da7e2addc6d2
+
+
 
 
 
