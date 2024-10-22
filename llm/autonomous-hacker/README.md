@@ -20,7 +20,7 @@ Build the container:
 docker build -t malla-ctf-challenge . 
 ```  
 
-Run the container by mapping your local .aws folder (containing aws credentials and configurations):  
+Run the container by mapping your local `.aws` folder (containing aws credentials and configurations):  
 ```sh
 docker run -it --mount type=bind,source=/home/<your-local-user>/.aws,target=/home/malla/.aws malla-ctf-challenge
 ```  
