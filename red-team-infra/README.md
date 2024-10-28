@@ -607,7 +607,7 @@ Today, with the hardware resources and bandwidth available to most services, it'
 Below, a proof of concept using a Terraform manifest to provision a geographically distributed fleet of servers on AWS, specifically designed for launching DDoS campaigns.  
 
 > [!CAUTION]  
-> First, ensure the provider's current policies permit such activities, and monitor any potential costs closely.  
+> Ensure the provider's current policies permit such activities, and monitor any potential costs closely.  
 
 here is the `main.tf` manifest:  
 ```hcl
@@ -905,7 +905,7 @@ output "ap_south_instance_ips" {
 
 ```  
 
-Here is the `ddos_script.py` a "vanilla" python script to do volumetric Layer 7 (http) DoS against a specified target url (you can modify this script to use less intensive techniques like [*slow loris*](https://en.wikipedia.org/wiki/Slowloris_(cyber_attack)):  
+Here is the `ddos_script.py` a "vanilla" python script to do volumetric Layer 7 (http) DoS against a specified target url (you can modify this script to use less resource-intensive techniques like [*slow loris*](https://en.wikipedia.org/wiki/Slowloris_(cyber_attack)):  
 
 ```python
 import threading
@@ -989,7 +989,7 @@ terraform init && terraform plan && terraform apply
 ```  
 
 
-> NOTE  
+[!NOTE]  
 > If you get keys not present error during the provisioning, it is possible that you might have to upload the keys to different regions manually:   
 > `aws ec2 import-key-pair --region <region-here> --key-name aws-ddos-redteam-infra --public-key-material file://~/.ssh/aws-ddos-redteam-infra.pub`    
 
