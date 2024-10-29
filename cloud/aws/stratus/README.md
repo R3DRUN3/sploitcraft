@@ -191,7 +191,13 @@ Output example:
 > remember that you can also launch the various stage one at the time   
 > for example via `stratus warmup <technique-id>` and, in a second moment `stratus detonate <tehcnique-id>`.     
 
-In the following video, you can see a new stratus module to test llmhijacking on [*aws bedrock*](https://aws.amazon.com/bedrock/):  
+
+<br/>  
+
+In the following video, you can see a new stratus module to test *LLMhijacking* on [*aws bedrock*](https://aws.amazon.com/bedrock/):  
+
+
+https://github.com/user-attachments/assets/dda571ec-0cda-4c0f-bd38-7ed7e7832c12
 
 
 
