@@ -1,0 +1,5 @@
+# sliver implant windows
+payload.exe
+
+# sliver implant linux
+payload_linux
