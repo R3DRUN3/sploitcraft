@@ -4,12 +4,209 @@
 This document contains guidelines on deploying infrastructure that can be useful for red teaming campaigns.  
 
 ## Table of Contents
+- [Deploy a Sliver server on AWS](#deploy-a-sliver-server-on-aws)  
 - [Deploy a static website via AWS S3 and CloudFront](#deploy-a-static-website-via-aws-s3-and-cloudfront)
 - [Deploy a static website via GitHub Pages](#deploy-a-static-website-via-github-pages)
 - [Maintain persistent access with Tailscale](#maintain-persistent-access-with-tailscale)  
 - [Deploy a Lambda function for data exfiltration](#deploy-a-lambda-function-for-data-exfiltration)  
 - [Deploy AWS Infrastructure for DDoS Engagements](#deploy-aws-infrastructure-for-ddos-engagements)  
 - [Deploy Azure Infrastructure for DDoS Engagements](#deploy-azure-infrastructure-for-ddos-engagements)
+
+
+## Deploy a Sliver server on AWS 
+
+Sliver is an open-source, cross-platform adversary emulation and red team framework.  
+The following instructions are for provisioning a Sliver server via AWS EC2.  
+For a quick-start on how to use sliver, take a look at [*this*](https://github.com/R3DRUN3/sploitcraft/tree/main/c2/sliver).  
+To go deeper into Sliver functionalities, read the [*official docs*](https://sliver.sh/).  
+
+generate the following ssh keys:   
+```sh
+ ssh-keygen -t rsa -b 4096 -C "aws-sliver-server" -f ~/.ssh/aws-sliver-server
+```
+
+Ensure the correct permissions are set for the keys:  
+```sh
+chmod 600 ~/.ssh/aws-sliver-server
+chmod 644 ~/.ssh/aws-sliver-server.pub
+```
+
+Now prepare the following terraform files.  
+main.tf:  
+```hcl
+terraform {
+  required_version = ">= 1.10.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.0.0"
+    }
+  }
+
+  backend "s3" {
+    bucket  = "<your-s3-tf-status-bucket-name>"
+    key     = "aws-sliver-server"
+    region  = "eu-north-1"
+    encrypt = true
+  }
+}
+
+provider "aws" {
+  region = "eu-north-1"
+}
+
+resource "aws_security_group" "sliver_sg" {
+  name        = "sliver-c2-security-group"
+  description = "Allow SSH and Sliver C2 ports"
+
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow mTLS service"
+    from_port   = 8888
+    to_port     = 8888
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow WireGuard service"
+    from_port   = 51820
+    to_port     = 51820
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow HTTP service"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow HTTPS service"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "sliver_server" {
+  ami           = "ami-08eb150f611ca277f" # Ubuntu 22.04 AMI
+  instance_type = "t3.micro"
+  key_name      = "aws-sliver-server"
+  security_groups = [aws_security_group.sliver_sg.name]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              set -e
+
+              # Log output for debugging
+              exec > /var/log/user_data.log 2>&1
+
+              # Set environment variable to avoid prompts during package upgrades
+              export DEBIAN_FRONTEND=noninteractive
+
+              # Update and upgrade packages
+              apt update -y
+              apt upgrade -y
+
+              # Install required tools
+              apt install -y curl mingw-w64
+
+              # Install Sliver
+              curl -fsSL https://sliver.sh/install | bash
+
+              # Enable and start Sliver service
+              systemctl enable sliver
+              systemctl start sliver
+  EOF
+
+  tags = {
+    Name = "C2-Server"
+  }
+}
+
+resource "aws_key_pair" "sliver_key" {
+  key_name   = "aws-sliver-server"
+  public_key = file("~/.ssh/aws-sliver-server.pub")
+}
+
+output "sliver_server_public_ip" {
+  value = aws_instance.sliver_server.public_ip
+  description = "The public IP address of the Sliver C2 server."
+}
+
+```
+
+output.tf:  
+```hcl
+output "instance_id" {
+  value       = aws_instance.sliver_server.id
+  description = "The ID of the EC2 instance."
+}
+
+output "public_ip" {
+  value       = aws_instance.sliver_server.public_ip
+  description = "The public IP address of the Sliver server."
+}
+
+```
+
+
+Init terraform and generate plan:  
+```sh
+terraform init && terraform plan
+```  
+
+Review the plan and, if you are ok with it, launch the provisioning:  
+```sh
+terraform apply -auto-approve  
+```  
+
+Once the provisioning is complete, you will get an output similar to the following:  
+```sh
+Outputs:
+
+instance_id = "i-061e796fd829307d0"
+public_ip = "16.171.132.15"
+sliver_server_public_ip = "16.171.132.15"
+```  
+
+Now you can connect to your sliver server via the following command:  
+```sh
+ssh -i ~/.ssh/aws-sliver-server ubuntu@<public_ip>
+```  
+
+
+
+
+To destroy everything run:  
+```sh
+terraform destroy -auto-approve
+```
+
+
+
+
+
 
 
 ## Deploy a static website via AWS S3 and CloudFront  
