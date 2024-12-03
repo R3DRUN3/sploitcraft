@@ -3,7 +3,7 @@
 
 ## Abstract  
 The Python sandbox in ChatGPT is a powerful feature; however, it lacks internet access and cannot be used for data exfiltration.   
-Fortunately, another tool in the ecosystem, the browser functionality, helps address this limitation.   
+Fortunately, another tool in the ecosystem, the browser functionality, helps address this limitation, as demonstrated by [*this paper*](https://arxiv.org/pdf/2406.00199).     
 When combined with memory persistence across chat sessions, this tool becomes a potent resource for  
 implementing extraction mechanisms, especially when paired with prompt injection techniques.  
 
