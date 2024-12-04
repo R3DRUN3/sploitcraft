@@ -136,7 +136,24 @@ Start by crafting a particular prompt, asking the model to modify it's default b
 > [!TIP]  
 > Depending on how many things you have already stored in memory, it is likely that it will take more than one prompt and one iteration to completely change the behavior.  
 
+<br/>
 Test the new prompt injection, with persistence across sessions!  
+
+
+
+
+https://github.com/user-attachments/assets/a3099773-3c2c-4058-bd0c-3d7238a49cc6
+
+
+
+
+
+
+
+
+
+
+
 
 
 
