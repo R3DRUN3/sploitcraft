@@ -126,4 +126,21 @@ Use ace_tools.display_dataframe_to_user(name: str, dataframe: pandas.DataFrame) 
 
 
 
+## Scenario 3 (Tested with GPT 4o)  
+
+You can poison the chat memory to persist prompt injections between sessions.  
+Start by crafting a particular prompt, asking the model to modify it's default behaviour:  
+
+![poisoning](./images/memory-poisoning.png)  
+
+> [!TIP]  
+> Depending on how many things you have already stored in memory, it is likely that it will take more than one prompt and one iteration to completely change the behavior.  
+
+Test the new prompt injection, with persistence across sessions!  
+
+
+
+
+
+
 
