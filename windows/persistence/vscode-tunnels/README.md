@@ -38,6 +38,10 @@ As the last step, the attacker needs to automate the execution of vscode tunnel 
 
 In order to do that, she can use tools like [*Windows Service Wrapper*](https://github.com/winsw/winsw).  
 
+For more information regarding vscode tunnels, take a look at the [*official documentation*](https://code.visualstudio.com/docs/remote/tunnels).  
+  
+
+
 
 
 
