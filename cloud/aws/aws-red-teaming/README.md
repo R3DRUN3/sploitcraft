@@ -191,7 +191,7 @@ At this point, we need to start enumerating our permissions to understand what a
 
 > [!TIP]
 > Depending on the objectives of the engagement, we have several approaches:  
-> - The least noisy but slowest method involves manually and carefully invoking [*specific APIs*](https://docs.aws.amazon.com/cli/latest/reference/) that are likely to be strategic (e.g., `s3`, `ec2`, `ecr`, etc.) to determine if we have the necessary permissions.   
+> - The least noisy but slowest method involves manually and carefully invoking [*specific APIs*](https://docs.aws.amazon.com/cli/latest/reference/#available-services) that are likely to be strategic (e.g., `s3`, `ec2`, `ecr`, etc.) to determine if we have the necessary permissions.   
 > - Automated tools for permission enumeration can also be used, such as [*enumerate-iam*](https://github.com/andresriancho/enumerate-iam).  
 > - Finally, there are dedicated exploitation frameworks designed for AWS, such as [*PACU*](../pacu/README.md), which automate various actions but tend to generate significant noise.  
 Pacu is very powerfull and I love it but, in my opninion, should be used as a last resort.  
