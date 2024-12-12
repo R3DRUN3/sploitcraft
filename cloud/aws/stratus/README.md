@@ -1,4 +1,4 @@
-# AWS RED TEAM WITH STRATUS
+# AWS RED TEAMING WITH STRATUS
 
 [*Stratus Red Team*](https://github.com/DataDog/stratus-red-team) is a  cybersecurity tool designed to simulate advanced persistent threat (APT) attacks, allowing organizations to test the resilience of their security defenses.  
 When used on AWS (Amazon Web Services), Stratum Red Team can help organizations assess their cloud security posture by emulating real-world cyber attacks in a controlled environment.  
