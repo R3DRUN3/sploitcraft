@@ -36,7 +36,9 @@ Based on my experience, security assessments and penetration testing activities 
 4. **Hardcore Red Teaming**:  
    This is the closest to a full-fledged red teaming engagement.  
    The objective is to simulate a realistic attack by a threat actor, leveraging authentic TTPs (Tactics, Techniques, and Procedures).  
-   This activity tests the client's detection and incident response capabilities without prior knowledge of their processes. It often starts with the client providing one or more sets of access keys associated with IAM users.   
+   This activity tests the client's detection and incident response capabilities without prior knowledge of their processes. It often starts with the client providing one or more sets of access keys associated with IAM users.  
+   If you are doing a full black box engagement, start from [*here*](https://hackingthe.cloud/aws/exploitation/Misconfigured_Resource-Based_Policies/exploting_public_resources_attack_playbook/).  
+
 
 This guide focuses primarily on *hardcore red teaming* activities, as the other categories are partially documented in other pages (see links above).  
 
@@ -80,7 +82,7 @@ In this section, we will simulate a real-world activity, demonstrating the steps
 As previously mentioned, this type of activity typically begins with one or more long-term access key sets, associated with IAM users.  
 These keys may have been discovered through OSINT operations (e.g., in public repositories), obtained during prior engagements, or directly provided by the client specifically for this campaign. 
 
-For this scenario, let’s assume that the client has supplied a set of access keys, which we have already exported as environment variables:  
+For this scenario, let’s assume that we were able to retrieve a set of access keys from a misconfigured CI pipeline, and we have exported them as environment variables:  
 ```sh
 export AWS_ACCESS_KEY_ID=<CUSTOMER-AWS-ACCESS-KEY-ID-HERE>
 export export AWS_SECRET_ACCESS_KEY=<CUSTOMER-AWS-SECRET-ACCESS-KEY-HERE>
