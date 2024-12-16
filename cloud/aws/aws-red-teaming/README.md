@@ -13,6 +13,7 @@ It focuses specifically on penetration testing and red teaming activities, offer
   - [Types of Activities](#types-of-activities)
   - [Useful Resources](#useful-resources)
   - [Prerequisites](#prerequisites)
+  - [OSS Tools](#oss-tools)
   - [Campaign Simulation  n°1](#campaign-simulation--n1)
 
 ## Types of Activities  
@@ -73,6 +74,22 @@ Any additional tools or software can be downloaded later or as needed, depending
 From experience, having an AWS account already [*set up*](https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html) can also be incredibly useful.  
 This is because, more often than it should, companies craft resource policies that grant access to all aws principals (anyone with an AWS account). 
 
+## OSS Tools   
+The AWS ecosystem is constantly evolving, along with the tools used to interact with it.  
+Below is a list of open-source tools that I have frequently utilized over time for assessments and offensive security activities targeting AWS environments.  
+
+- [*AWS-CLI*](https://github.com/aws/aws-cli)  (Of course 😉)
+- [*Pacu*](https://github.com/RhinoSecurityLabs/pacu)  
+- [*Prowler*](https://github.com/prowler-cloud/prowler)  
+- [*CloudFox*](https://github.com/BishopFox/cloudfox)  
+- [*Stratus*](https://github.com/DataDog/stratus-red-team)  
+- [*ScoutSuite*](https://github.com/nccgroup/ScoutSuite)  
+- [*s3scan*](https://github.com/sa7mon/S3Scanner)  
+- [*enumerate-iam*](https://github.com/andresriancho/enumerate-iam) 
+- [*Parliament*](https://github.com/duo-labs/parliament)  
+- [*Iamlive*](https://github.com/iann0036/iamlive)  
+- [*Trivy*](https://github.com/aquasecurity/trivy)   
+- [*gitleaks*](https://github.com/gitleaks/gitleaks)  
 
 
 ## Campaign Simulation  n°1
