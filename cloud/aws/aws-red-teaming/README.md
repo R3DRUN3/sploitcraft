@@ -71,7 +71,10 @@ Any additional tools or software can be downloaded later or as needed, depending
 
 > [!WARNING]  
 > If you are performing the activity from Kali or other operating systems specifically designed for penetration testing,  
-> it is highly recommended to [*set up a proxy*](https://hackingthe.cloud/aws/avoiding-detection/guardduty-pentest/) to route AWS calls (and modify the user agent) or [*run the aws-cli in docker*](https://hub.docker.com/r/amazon/aws-cli). 
+> it is highly recommended to [*set up a proxy*](https://hackingthe.cloud/aws/avoiding-detection/guardduty-pentest/) to route AWS calls (and modify the user agent) or [*run the aws-cli in docker*](https://hub.docker.com/r/amazon/aws-cli).  
+> If you want to run the aws-cli in docker, use the following command (for zsh) for adding a permanent alias:  
+> `echo "alias aws='docker run --rm -v ~/.aws:/root/.aws -v \$(pwd):/aws -it amazon/aws-cli'" >> ~/.zshrc && source ~/.zshrc`  
+
 
 From experience, having an AWS account already [*set up*](https://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html) can also be incredibly useful.  
 This is because, more often than it should, companies craft resource policies that grant access to all aws principals (anyone with an AWS account). 
