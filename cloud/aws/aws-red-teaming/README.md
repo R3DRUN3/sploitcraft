@@ -42,6 +42,8 @@ Based on my experience, security assessments and penetration testing activities 
 
 
 This guide focuses primarily on *hardcore red teaming* activities, as the other categories are partially documented in other pages (see links above).  
+For a general overview of cloud pentesting methodology, please refer to [*this*](https://cloud.hacktricks.xyz/pentesting-cloud/pentesting-cloud-methodology).  
+
 
 
 > [!IMPORTANT]  
