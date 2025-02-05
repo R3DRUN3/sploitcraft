@@ -4,13 +4,19 @@
 This document contains guidelines on deploying infrastructure that can be useful for red teaming campaigns.  
 
 ## Table of Contents
-- [Deploy a Sliver server on AWS](#deploy-a-sliver-server-on-aws)  
-- [Deploy a static website via AWS S3 and CloudFront](#deploy-a-static-website-via-aws-s3-and-cloudfront)
-- [Deploy a static website via GitHub Pages](#deploy-a-static-website-via-github-pages)
-- [Maintain persistent access with Tailscale](#maintain-persistent-access-with-tailscale)  
-- [Deploy a Lambda function for data exfiltration](#deploy-a-lambda-function-for-data-exfiltration)  
-- [Deploy AWS Infrastructure for DDoS Engagements](#deploy-aws-infrastructure-for-ddos-engagements)  
-- [Deploy Azure Infrastructure for DDoS Engagements](#deploy-azure-infrastructure-for-ddos-engagements)
+
+- [RED TEAM INFRASTRUCTURE](#red-team-infrastructure)
+  - [Table of Contents](#table-of-contents)
+  - [Deploy a Sliver server on AWS](#deploy-a-sliver-server-on-aws)
+  - [Deploy a static website via AWS S3 and CloudFront](#deploy-a-static-website-via-aws-s3-and-cloudfront)
+  - [Deploy a static website via GitHub Pages](#deploy-a-static-website-via-github-pages)
+  - [Maintain persistent access with Tailscale](#maintain-persistent-access-with-tailscale)
+  - [Deploy a Lambda function for data exfiltration](#deploy-a-lambda-function-for-data-exfiltration)
+  - [Deploy AWS Infrastructure for DDoS Engagements](#deploy-aws-infrastructure-for-ddos-engagements)
+  - [Deploy Azure Infrastructure for DDoS Engagements](#deploy-azure-infrastructure-for-ddos-engagements)
+  - [Deploy a GPU-based cloud instance for password cracking](#deploy-a-gpu-based-cloud-instance-for-password-cracking)
+
+
 
 
 ## Deploy a Sliver server on AWS 
@@ -1226,7 +1232,7 @@ if __name__ == "__main__":
 
 ```   
 
-### Instructions  
+**Instructions**  
 
 Generate the required ssh keys (both public and private) for connecting to the cloud VMs and put them in `~/.ssh/`:  
 
@@ -1477,7 +1483,150 @@ output "vm_ip_addresses" {
   value = [for pip in azurerm_public_ip.pip_west_europe : pip.ip_address]
 }
 
-```
+```  
+
+
+## Deploy a GPU-based cloud instance for password cracking   
+
+**Abstract**  
+This section contains terraform manifest and istructions to deploy a password cracking machine on [*Lambda Labs*](https://lambdalabs.com/).  
+The created instance will already have `hashcat` installed, along with the `rockyou.txt` (134 M) dictionary and an example hash file (you need to create the example file: `example_hashes.txt`).  
+
+> [!TIP]  
+To make Hashcat password cracking more effective in real-world scenarios, rely on diverse wordlists beyond `rockyou.txt`, such as [*these*](https://github.com/danielmiessler/SecLists/tree/master/Passwords) and custom corpora built from OSINT scraping.  
+Leverage rule-based attacks like [*OneRuleToRuleThemAll*](https://github.com/NotSoSecure/password_cracking_rules) to generate permutations efficiently. 
+Use modern tools like [*cewl*](https://github.com/digininja/CeWL) to generate context-aware, targeted wordlists from breached data and common patterns. 
+
+
+**Prerequisites**  
+- Terraform 
+- Lambda labs account
+- Lambda labs API Key
+- Lambda labs SSH Key 
+
+**Instructions**  
+
+First of all, create a `.env` file with the following structure:  
+```sh
+export LAMBDALABS_API_KEY=<your-lambdalabs-api-key-here>
+```  
+Now, source the file with `source .env` and test the connection to lambda labs REST APIs:  
+```sh
+curl -s -u $LAMBDALABS_API_KEY: https://cloud.lambdalabs.com/api/v1/instance-types | jq .
+```  
+The previous command will return a list of all available istance types and their price (you can change the default istance specified in the `main.tf` file if you want a more powerfull one). 
+
+Now put your lambda labs private ssh key inside an `ssh` directory in the root of your folder.  
+> [!WARNING]  
+> Remember to change permissions on the file:  `chmod 600 ssh/<your-private-key-pem-file>`  
+ 
+
+If you already have a file of captured hashes that you wish to crack, place it inside the `hashes` folder, modify the terraform and it will be copied to the remote instance during provisioning.  
+If you need another dictionary, copy it on the machine via scp or download it from the internet directly on the machine. 
+
+Create the following `main.tf` file:  
+```hcl
+terraform {
+  required_providers {
+    lambdalabs = {
+      source = "elct9620/lambdalabs"
+      version = "0.4.0"
+    }
+  }
+}
+
+provider "lambdalabs" {}
+
+
+resource "lambdalabs_instance" "hash_cracking" {
+  region_name        = "us-east-1"
+  instance_type_name = "gpu_1x_a100_sxm4" # change this and the region if you want other istance type
+  ssh_key_names = [
+    "red-team-terraform-provisioning"
+  ]
+
+  connection {
+    type     = "ssh"
+      user     = "ubuntu"
+      private_key = file("${path.module}/ssh/red-team-terraform-provisioning.pem")
+      host     = self.ip
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/hashes/hashes_example.txt"
+    destination = "/home/ubuntu/hashes_example.txt"
+  }
+
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update && sudo apt install -y curl wget hashcat",
+      "wget https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt"
+    ]
+  }
+
+}
+
+
+output "instance_ip" {
+  value = lambdalabs_instance.hash_cracking.ip
+}
+
+```  
+
+
+Init terraform and launch the plan:  
+```sh
+terraform init && terraform plan
+```  
+
+If you are ok with the plan, apply:  
+```sh
+terraform apply -auto-approve
+```  
+
+> [!WARNING]  
+> With the previous manifest, terraform state is only saved locally.  
+
+The provisioning takes 5 minutes on average, in the end terraform will print the istance public ip address.    
+
+Connect to the machine via ssh in a single command:  
+```sh
+ssh -i ssh/red-team-terraform-provisioning.pem -o IdentitiesOnly=yes ubuntu@$(terraform output -raw instance_ip)
+```  
+
+Now that you are connected, confirm that hashcat and the NVIDIA drivers are installed and the GPU is recognized:  
+```sh
+nvidia-smi && hashcat --version
+```  
+
+Now crack your hashes, for example:  
+```sh
+hashcat -m 1000 -a 0 -o cracked.txt /home/ubuntu/hashes_example.txt /home/ubuntu/rockyou.txt
+```  
+
+if you want to confirm that the GPU is being used, open another session and run:  
+```sh
+watch -n 1 nvidia-smi
+```  
+
+Once you are done, destroy everything with:  
+```sh
+terraform destroy -auto-approve
+```  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
