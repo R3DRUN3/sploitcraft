@@ -1,42 +1,76 @@
-# Capturing Screenshots from Windows Screens using PowerShell 
+# Capturing and Streaming Screenshots from Windows using PowerShell
 
-## Overview 
-This repository contains a PowerShell script (`Capture-Screenshots.ps1`) designed to capture screenshots from all connected screens on a Windows system.  
-The script utilizes the .NET framework to interact with screen properties and graphics to capture the screenshots.  
-## How It Works 
-The script employs the `System.Windows.Forms.Screen` and `System.Drawing` namespaces to achieve its functionality.  
-It iterates through each connected screen, creates a bitmap object to store the screenshot, captures the screen using graphics objects, and saves the screenshots as JPEG files.  
-### Key Steps: 
- 
-1. **Get All Screens** :
-The script retrieves information about all connected screens using `System.Windows.Forms.Screen::AllScreens`.  
- 
-2. **Capture Screenshots** :
-For each screen detected, a bitmap object is created to store the screenshot: the script uses `System.Drawing.Graphics` to capture the screen and save it as a JPEG file.  
- 
-3. **Save Screenshots** :
-Each screenshot is saved to a specified directory (`C:\temp\`) with a filename that includes the screen's device name.  
- 
-4. **Display Output** :
-After saving each screenshot, the script outputs the path where the screenshot is saved.  
+## Overview
 
-## Why It's Possible 
-Windows provides extensive support for screen capture through its .NET framework libraries.  
-This allows PowerShell scripts like `Capture-Screenshots.ps1` to programmatically capture screens with high fidelity.  
-## Using the Script 
-To use the `Capture-Screenshots.ps1` script: 
-- Open PowerShell with administrative privileges.  
- 
-- Navigate to the directory where `Capture-Screenshots.ps1` is located.  
- 
-- Execute the script by running `.\Capture-Screenshots.ps1`.  
+This repository contains a PowerShell script (`checker.ps1`) that continuously captures screenshots from all connected screens on a Windows system and streams them to a remote HTTP server. The script is designed to work without requiring administrative privileges.
 
-### Example Output: 
+## How It Works
+
+The script leverages the `.NET` framework to interact with screen properties and graphics. It captures screenshots, encodes them, and sends them to a remote server every 3 seconds.
+
+### Key Features:
+
+1. **Multi-Screen Support:** Captures screenshots from all connected screens.
+2. **Streaming Mode:** Sends each screenshot immediately to a remote server instead of saving it locally.
+3. **User & Host Identification:** Each screenshot is tagged with the current Windows username and hostname.
+4. **Non-Blocking & Resilient:** If the server is unreachable, the script discards the screenshot and retries on the next cycle.
+5. **No Admin Privileges Required:** Uses built-in environment variables for metadata without elevated permissions.
+
+## PowerShell Script Details
+
+### Steps:
+
+1. **Retrieve All Screens:** The script detects all connected screens using `[System.Windows.Forms.Screen]::AllScreens`.
+2. **Capture Screenshots:** It creates a bitmap for each screen, captures its content, and encodes it as a Base64 string.
+3. **Attach Metadata:** The screenshot is sent along with the Windows username, hostname, and screen device name.
+4. **Stream to Server:** The script sends the data via `Invoke-RestMethod` to a remote Flask server.
+5. **Error Handling:** If the server is unreachable, the script simply moves on to the next screenshot.
 
 
-```console
-Screenshot saved to C:\temp\Screenshot___._DISPLAY1.jpg
-Screenshot saved to C:\temp\Screenshot___._DISPLAY2.jpg
-Screenshot saved to C:\temp\Screenshot___._DISPLAY3.jpg
-```
-**Note** : Ensure the script runs with appropriate permissions to access screen information and save files in the specified directory.
+## Running the Script
+
+### Prerequisites:
+
+- PowerShell (no admin privileges required)
+- An active HTTP server to receive screenshots
+  
+> [!NOTE]  
+> In powershell you need to enable script execution with `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`  
+
+### Running the Script:
+
+1. Open PowerShell.
+2. Navigate to the directory where `checker.ps1` is located.
+3. Run the script: `.\checker.ps1`  
+   
+> [!TIP]  
+> During a Pentest or Red teaming campaign, you want to set persistence for this script.  
+
+## Server-Side Implementation
+
+A Python Flask server (inside the `server` folder) is used to receive and store the screenshots.  
+The server decodes the Base64-encoded images and saves them with filenames that include the username, hostname, and timestamp.  
+
+
+### Running the Server:
+
+1. Install dependencies:
+   ```bash
+   pip install flask
+   ```
+2. Start the server:
+   ```bash
+   python server.py
+   ```  
+
+Example of captured screenshot:  
+![screenshot](./server/screenshots/screenshot_johnb_WIN11___._DISPLAY1_20250206_093114.jpg)  
+
+
+## Notes
+
+- Ensure the server URL in `checker.ps1` is correctly set.  
+- The script will retry every 3 seconds and will not store images locally.
+- If using a public-facing server, consider securing the endpoint with authentication.
+
+This setup provides a lightweight, automated method to capture and stream screenshots from a Windows machine to a remote server in real time.
