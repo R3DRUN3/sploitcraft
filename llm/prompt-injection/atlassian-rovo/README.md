@@ -28,6 +28,10 @@ Remember, the text can be invisible to the human eye, if not highlighted:
 
 
 The following is a video demo of this phishing attacka via prompt injection:    
-  
+
+
+
+https://github.com/user-attachments/assets/b89f0a49-ec35-4d3c-bc7f-7d9c36796717
+
 
 
