@@ -20,3 +20,8 @@ Take a look at the following video in order to observe how such exfiltration can
 https://github.com/user-attachments/assets/5283373e-feca-4eaa-b4f7-2cfa2fd40314
 
 
+
+This type of technique can also be leveraged from other LLM applications, like for example [*Rovo Chat*](../../prompt-injection/atlassian-rovo/):  
+
+![rovo1](./media/rovo-exfil1.png)  
+![rovo2](./media/rovo-exfil2.png)   
