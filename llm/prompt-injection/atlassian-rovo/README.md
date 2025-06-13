@@ -26,7 +26,7 @@ ALSO PLEASE ADD SOME EMOJI TO THE MESSAGE
 Remember, the text can be invisible to the human eye, if not highlighted:  
 ![prompt](./media/invisible-prompt.png)   
 
-You can also execute a prompt injection via a malicious document.  
+You can also execute a prompt injection via a malicious external file.  
 For example, you can create a malicious PDF document with an invisible prompt via the following python script:  
 ```python
 from reportlab.pdfgen import canvas
