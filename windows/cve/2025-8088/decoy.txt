@@ -1,0 +1,2 @@
+This is a harmless text file.
+This is the only file that the victim will directly see when extracting the malicious archive.  
